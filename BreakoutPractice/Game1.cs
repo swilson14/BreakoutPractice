@@ -1,5 +1,6 @@
 ﻿using BreakoutPractice.Input;
 using BreakoutPractice.Src;
+using BreakoutPractice.Src.Graphics;
 using BreakoutPractice.Src.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -36,6 +37,9 @@ namespace BreakoutPractice
         private Texture2D _arrows;
         private Texture2D _hearts;
         private Texture2D _particle;
+        private TextureAtlas _atlas;
+        private List<Sprite> _paddleSprites = new List<Sprite>();
+
 
         // Audio
         private SoundEffect _paddleHitSound;
@@ -52,6 +56,8 @@ namespace BreakoutPractice
         private SoundEffect _highScoreSound;
         private SoundEffect _pauseSound;
         private Song _music;
+
+        private Paddle _paddle;
 
         public Game1()
         {
@@ -76,16 +82,17 @@ namespace BreakoutPractice
             _keyboard = new KeyboardInfo();
             _frameCounter = new FrameCounter();
 
+            _paddle = new Paddle(_paddleSprites);
+
             _stateMachine = new StateMachine();
 
             _stateMachine.States = new Dictionary<string, State>
             {
-                { "start", new StartState(_stateMachine, _paddleHitSound, _largeFont, _mediumFont)}
+                { "start", new StartState(_stateMachine, _paddleHitSound, _largeFont, _mediumFont, _confirmSound)},
+                { "play", new PlayState(_stateMachine, _paddle, _pauseSound, _largeFont)},
             };
 
             _stateMachine.ChangeState("start");
-
-            
         }
 
         protected override void LoadContent()
@@ -103,6 +110,30 @@ namespace BreakoutPractice
             _arrows = Content.Load<Texture2D>("Graphics/arrows");
             _hearts = Content.Load<Texture2D>("Graphics/hearts");
             _particle = Content.Load<Texture2D>("Graphics/particle");
+
+            // TextureAtlas
+            _atlas = new TextureAtlas(_main);
+            int x = 0;
+            int y = 64;
+
+            // Paddle Sprites
+            for (int i = 1; i < 5; i++)
+            {
+                _atlas.AddRegion($"smallestPaddle-{i}", x, y, 32, 16);
+                _atlas.AddRegion($"mediumPaddle-{i}", x + 32, y, 64, 16);
+                _atlas.AddRegion($"largePaddle-{i}", x + 96, y, 96, 16);
+                _atlas.AddRegion($"hugePaddle-{i}", x, y + 16, 128, 16);
+
+                _paddleSprites.Add(_atlas.CreateSprite($"smallestPaddle-{i}"));
+                _paddleSprites.Add(_atlas.CreateSprite($"mediumPaddle-{i}"));
+                _paddleSprites.Add(_atlas.CreateSprite($"largePaddle-{i}"));
+                _paddleSprites.Add(_atlas.CreateSprite($"hugePaddle-{i}"));
+
+                x = 0;
+                y += 32;
+            }
+
+
 
             // Audio
             // Sound Effects

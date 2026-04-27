@@ -17,13 +17,15 @@ namespace BreakoutPractice.Src.States
         private SoundEffect _paddleHitSound;
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
+        private SoundEffect _confirmSound;
 
-        public StartState(StateMachine stateMachine, SoundEffect paddleHitSound, SpriteFont largeFont, SpriteFont mediumFont) : base(stateMachine)
+        public StartState(StateMachine stateMachine, SoundEffect paddleHitSound, SpriteFont largeFont, SpriteFont mediumFont, SoundEffect confirmSound) : base(stateMachine)
         {
             highlighted = 1;
             _paddleHitSound = paddleHitSound;
             _largeFont = largeFont;
             _mediumFont = mediumFont;
+            _confirmSound = confirmSound;
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -39,6 +41,16 @@ namespace BreakoutPractice.Src.States
                     highlighted = 1;
                 }
                 _paddleHitSound.Play();
+            }
+
+            if (keyboard.WasKeyJustPressed(Keys.Enter)) 
+            {
+                _confirmSound.Play();
+
+                if (highlighted == 1) 
+                {
+                    _stateMachine.ChangeState("play");
+                }
             }
 
             // Escape/Quit Logic is no longer global
