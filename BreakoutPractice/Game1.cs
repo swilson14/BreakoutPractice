@@ -265,7 +265,7 @@ namespace BreakoutPractice
             // Calulate FPS
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             _frameCounter.Update(deltaTime);
-            string fps = string.Format("FPS: {0}", _frameCounter.AverageFramesPerSecond);
+            string fps = string.Format("FPS: {0}", Math.Round(_frameCounter.AverageFramesPerSecond));
 
             // Apply the transformation to the sprite batch
             _spriteBatch.Begin(transformMatrix: transformMatrix, samplerState: SamplerState.PointClamp);
