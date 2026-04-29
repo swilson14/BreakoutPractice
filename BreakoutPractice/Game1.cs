@@ -26,6 +26,7 @@ namespace BreakoutPractice
         private StateMachine _stateMachine;
         private KeyboardInfo _keyboard;
         private FrameCounter _frameCounter;
+        private LevelMaker _levelMaker;
 
         // Fonts
         private SpriteFont _smallFont;
@@ -61,6 +62,7 @@ namespace BreakoutPractice
         private Paddle _paddle;
         private Ball _ball;
         private Random random;
+        private Brick _brickTemplate;
 
         public Game1()
         {
@@ -88,9 +90,13 @@ namespace BreakoutPractice
             _paddle = new Paddle(_paddleSprites);
             
             random = new Random();
-            int ballSkin = random.Next(1,8);
+            int ballSkin = random.Next(7);
 
             _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
+
+            _brickTemplate = new Brick(_brickHitSound2, 0, 0, _brickSprites);
+
+            _levelMaker = new LevelMaker(random, _brickTemplate);
 
             _stateMachine = new StateMachine();
 
@@ -115,7 +121,7 @@ namespace BreakoutPractice
             _stateMachine.States = new Dictionary<string, State>
             {
                 { "start", new StartState(_stateMachine, soundEffects, _largeFont, _mediumFont)},
-                { "play", new PlayState(_stateMachine, _paddle, soundEffects, _largeFont, _ball, random)},
+                { "play", new PlayState(_stateMachine, _paddle, soundEffects, _largeFont, _ball, random, _levelMaker)},
             };
 
             _stateMachine.ChangeState("start");
@@ -141,7 +147,7 @@ namespace BreakoutPractice
             _atlas = new TextureAtlas(_main);
             PopulatePaddleSprites();
             PopulateBallSprites();
-
+            PopulateBrickSprites();
 
             // Audio
             // Sound Effects
@@ -162,6 +168,33 @@ namespace BreakoutPractice
             _music = Content.Load<Song>("Sounds/music");
         }
 
+        private void PopulateBrickSprites()
+        {
+            int x = 0;
+            int y = 0;
+            int count = 1;
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    _atlas.AddRegion($"brick-{count}", x, y, 32, 16);
+                    _brickSprites.Add(_atlas.CreateSprite($"brick-{count}"));
+                    x += 32;
+                    count++;
+                }
+                y+= 16;
+            }
+
+            for (int j = 0; j < 3; j++)
+            {
+                _atlas.AddRegion($"brick-{count}", x, y, 32, 16);
+                _brickSprites.Add(_atlas.CreateSprite($"brick-{count}"));
+                x += 32;
+                count++;
+            }
+        }
+
         private void PopulateBallSprites()
         {
             int x = 96;
@@ -175,7 +208,7 @@ namespace BreakoutPractice
                 count++;
             }
 
-            x = 98;
+            x = 96;
             y = 56;
 
             for (int i = 0; i < 3; i++)

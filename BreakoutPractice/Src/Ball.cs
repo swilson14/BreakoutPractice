@@ -13,6 +13,8 @@ namespace BreakoutPractice.Src
 {
     public class Ball
     {
+        private const float SPEED = 1.2f;
+
         public float Width { get; set; }
         public float Height { get; set; }
         public float X { get; set; }
@@ -42,7 +44,7 @@ namespace BreakoutPractice.Src
                 return false;
             }
 
-            if (Y > target.Y  || target.Y > Y + Height)
+            if (Y > target.Y + target.Height || target.Y > Y + Height)
             {
                 return false;
             }
