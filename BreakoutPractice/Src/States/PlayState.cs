@@ -14,15 +14,27 @@ namespace BreakoutPractice.Src.States
     public class PlayState : State
     {
         private Paddle _paddle;
+        private Ball _ball;
         private SoundEffect _pauseSound;
+        private SoundEffect _paddleHit;
         private SpriteFont _largeFont;
         private bool _paused;
 
-        public PlayState(StateMachine stateMachine, Paddle paddle, SoundEffect pauseSound, SpriteFont largeFont) : base(stateMachine)
+        public PlayState(StateMachine stateMachine, Paddle paddle, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Ball ball, Random random) : base(stateMachine)
         {
             _paddle = paddle;
-            _pauseSound = pauseSound;
+            _pauseSound = gameSounds["pause"];
             _largeFont = largeFont;
+            _ball = ball;
+            _paddleHit = gameSounds["paddle_hit"];
+
+            int ballDx = random.Next(-200,201);
+            int ballDy = random.Next(-50, 61);
+
+            _ball.Velocity = new Vector2(ballDx, ballDy);
+
+            _ball.X = Constants.VIRTUAL_WIDTH / 2 - 4;
+            _ball.Y = Constants.VIRTUAL_HEIGHT - 42;
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -47,6 +59,13 @@ namespace BreakoutPractice.Src.States
             }
 
             _paddle.Update(gameTime, keyboard);
+            _ball.Update(gameTime);
+
+            if (_ball.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
+            {
+                _ball.Velocity = new Vector2(_ball.Velocity.X, -_ball.Velocity.Y);
+                _paddleHit.Play();
+            }
 
             // Escape/Quit Logic is no longer global
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
@@ -56,6 +75,7 @@ namespace BreakoutPractice.Src.States
         public override void Draw(SpriteBatch spriteBatch)
         {
             _paddle.Draw(spriteBatch);
+            _ball.Draw(spriteBatch);
             if (_paused)
             {
                 string pauseText = "PAUSED";

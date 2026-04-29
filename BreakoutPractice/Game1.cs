@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -39,7 +40,8 @@ namespace BreakoutPractice
         private Texture2D _particle;
         private TextureAtlas _atlas;
         private List<Sprite> _paddleSprites = new List<Sprite>();
-
+        private List<Sprite> _ballSprites = new List<Sprite>();
+        private List<Sprite> _brickSprites = new List<Sprite>();
 
         // Audio
         private SoundEffect _paddleHitSound;
@@ -56,8 +58,9 @@ namespace BreakoutPractice
         private SoundEffect _highScoreSound;
         private SoundEffect _pauseSound;
         private Song _music;
-
         private Paddle _paddle;
+        private Ball _ball;
+        private Random random;
 
         public Game1()
         {
@@ -83,13 +86,36 @@ namespace BreakoutPractice
             _frameCounter = new FrameCounter();
 
             _paddle = new Paddle(_paddleSprites);
+            
+            random = new Random();
+            int ballSkin = random.Next(1,8);
+
+            _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
 
             _stateMachine = new StateMachine();
 
+            Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>
+            {
+                {"paddle_hit", _paddleHitSound},
+                {"score", _scoreSound},
+                {"wall_hit", _wallHitSound},
+                {"confirm", _confirmSound},
+                {"select", _selectSound},
+                {"no_select", _noSelectSound},
+                {"brick_hit_1", _brickHitSound1},
+                {"brick_hit_2", _brickHitSound2},
+                {"hurt", _hurtSound},
+                {"victory", _victorySound},
+                {"recover", _recoverSound},
+                {"high_score", _highScoreSound},
+                {"pause", _pauseSound},
+            };
+
+    
             _stateMachine.States = new Dictionary<string, State>
             {
-                { "start", new StartState(_stateMachine, _paddleHitSound, _largeFont, _mediumFont, _confirmSound)},
-                { "play", new PlayState(_stateMachine, _paddle, _pauseSound, _largeFont)},
+                { "start", new StartState(_stateMachine, soundEffects, _largeFont, _mediumFont)},
+                { "play", new PlayState(_stateMachine, _paddle, soundEffects, _largeFont, _ball, random)},
             };
 
             _stateMachine.ChangeState("start");
@@ -113,26 +139,8 @@ namespace BreakoutPractice
 
             // TextureAtlas
             _atlas = new TextureAtlas(_main);
-            int x = 0;
-            int y = 64;
-
-            // Paddle Sprites
-            for (int i = 1; i < 5; i++)
-            {
-                _atlas.AddRegion($"smallestPaddle-{i}", x, y, 32, 16);
-                _atlas.AddRegion($"mediumPaddle-{i}", x + 32, y, 64, 16);
-                _atlas.AddRegion($"largePaddle-{i}", x + 96, y, 96, 16);
-                _atlas.AddRegion($"hugePaddle-{i}", x, y + 16, 128, 16);
-
-                _paddleSprites.Add(_atlas.CreateSprite($"smallestPaddle-{i}"));
-                _paddleSprites.Add(_atlas.CreateSprite($"mediumPaddle-{i}"));
-                _paddleSprites.Add(_atlas.CreateSprite($"largePaddle-{i}"));
-                _paddleSprites.Add(_atlas.CreateSprite($"hugePaddle-{i}"));
-
-                x = 0;
-                y += 32;
-            }
-
+            PopulatePaddleSprites();
+            PopulateBallSprites();
 
 
             // Audio
@@ -152,6 +160,55 @@ namespace BreakoutPractice
             _pauseSound = Content.Load<SoundEffect>("Sounds/pause");
             // Song
             _music = Content.Load<Song>("Sounds/music");
+        }
+
+        private void PopulateBallSprites()
+        {
+            int x = 96;
+            int y = 48;
+            int count = 1;
+            for (int i = 0; i < 4; i++)
+            {
+                _atlas.AddRegion($"ball-{count}", x, y, 8, 8);
+                _ballSprites.Add(_atlas.CreateSprite($"ball-{count}"));
+                x += 8;
+                count++;
+            }
+
+            x = 98;
+            y = 56;
+
+            for (int i = 0; i < 3; i++)
+            {
+                _atlas.AddRegion($"ball-{count}", x, y, 8, 8);
+                _ballSprites.Add(_atlas.CreateSprite($"ball-{count}"));
+                x += 8;
+                count++;
+            }
+        }
+
+        private void PopulatePaddleSprites()
+        {
+            int x = 0;
+            int y = 64;
+            int count = 1;
+            // Paddle Sprites
+            for (int i = 0; i < 4; i++)
+            {
+                _atlas.AddRegion($"smallestPaddle-{count}", x, y, 32, 16);
+                _atlas.AddRegion($"mediumPaddle-{count}", x + 32, y, 64, 16);
+                _atlas.AddRegion($"largePaddle-{count}", x + 96, y, 96, 16);
+                _atlas.AddRegion($"hugePaddle-{count}", x, y + 16, 128, 16);
+
+                _paddleSprites.Add(_atlas.CreateSprite($"smallestPaddle-{count}"));
+                _paddleSprites.Add(_atlas.CreateSprite($"mediumPaddle-{count}"));
+                _paddleSprites.Add(_atlas.CreateSprite($"largePaddle-{count}"));
+                _paddleSprites.Add(_atlas.CreateSprite($"hugePaddle-{count}"));
+
+                x = 0;
+                y += 32;
+                count++;
+            }
         }
 
         protected override void Update(GameTime gameTime)

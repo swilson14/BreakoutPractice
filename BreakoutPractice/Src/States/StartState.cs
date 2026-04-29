@@ -19,13 +19,13 @@ namespace BreakoutPractice.Src.States
         private SpriteFont _mediumFont;
         private SoundEffect _confirmSound;
 
-        public StartState(StateMachine stateMachine, SoundEffect paddleHitSound, SpriteFont largeFont, SpriteFont mediumFont, SoundEffect confirmSound) : base(stateMachine)
+        public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, SpriteFont mediumFont) : base(stateMachine)
         {
             highlighted = 1;
-            _paddleHitSound = paddleHitSound;
+            _paddleHitSound = gameSounds["paddle_hit"];
             _largeFont = largeFont;
             _mediumFont = mediumFont;
-            _confirmSound = confirmSound;
+            _confirmSound = gameSounds["confirm"];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)

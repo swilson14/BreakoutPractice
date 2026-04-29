@@ -23,7 +23,7 @@ namespace BreakoutPractice.Src
     {
         public float X { get; set; }
         public float Y { get; set; }
-        public float dX { get; set; }
+        public Vector2 Velocity { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
         public int Skin { get; set;  }        
@@ -48,25 +48,25 @@ namespace BreakoutPractice.Src
         {
             if (keyboard.IsKeyDown(Keys.Left) || keyboard.IsKeyDown(Keys.A))
             {
-                dX = -Constants.PADDLE_SPEED;
+                Velocity = new Vector2(-Constants.PADDLE_SPEED,0);
             }
             else if (keyboard.IsKeyDown(Keys.Right) || keyboard.IsKeyDown(Keys.D))
             {
-                dX = Constants.PADDLE_SPEED;
+                Velocity = new Vector2(Constants.PADDLE_SPEED,0);
             }
             else 
             { 
-                dX = 0; 
+                Velocity = Vector2.Zero; 
             }
 
             // Prevent paddle from moving off screen
-            if (dX < 0)
+            if (Velocity.X < 0)
             {
-                X = Math.Max(0, X + (float)(dX * gameTime.ElapsedGameTime.TotalSeconds));
+                X = Math.Max(0, X + (float)(Velocity.X * gameTime.ElapsedGameTime.TotalSeconds));
             }
             else 
             {
-                X = Math.Min(Constants.VIRTUAL_WIDTH - Width, X + (float)(dX * gameTime.ElapsedGameTime.TotalSeconds));
+                X = Math.Min(Constants.VIRTUAL_WIDTH - Width, X + (float)(Velocity.X * gameTime.ElapsedGameTime.TotalSeconds));
             }
         }
 
