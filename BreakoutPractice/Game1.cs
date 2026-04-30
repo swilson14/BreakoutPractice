@@ -43,6 +43,7 @@ namespace BreakoutPractice
         private List<Sprite> _paddleSprites = new List<Sprite>();
         private List<Sprite> _ballSprites = new List<Sprite>();
         private List<Sprite> _brickSprites = new List<Sprite>();
+        private List<Sprite> _heartSprites = new List<Sprite>();
 
         // Audio
         private SoundEffect _paddleHitSound;
@@ -148,6 +149,7 @@ namespace BreakoutPractice
             PopulatePaddleSprites();
             PopulateBallSprites();
             PopulateBrickSprites();
+            PopulateHeartSprites();
 
             // Audio
             // Sound Effects
@@ -166,6 +168,26 @@ namespace BreakoutPractice
             _pauseSound = Content.Load<SoundEffect>("Sounds/pause");
             // Song
             _music = Content.Load<Song>("Sounds/music");
+        }
+
+        private void PopulateHeartSprites()
+        {
+            int tileWidth = 9;
+            int tileHeight = 10;
+
+            float sheetWidth = _atlas.Texture.Width / tileWidth;
+            float sheetHeight = _atlas.Texture.Height / tileHeight;
+
+            int count = 1;
+            for (int i = 0; i < sheetHeight-1; i++)
+            {
+                for (int j = 0; j < sheetWidth-1; j++)
+                {
+                    _atlas.AddRegion($"heart-{count}", j * tileWidth, i * tileHeight, tileWidth, tileHeight);
+                    _heartSprites.Add(_atlas.CreateSprite($"heart-{count}"));
+                    count++;
+                }
+            }
         }
 
         private void PopulateBrickSprites()

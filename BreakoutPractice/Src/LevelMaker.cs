@@ -26,9 +26,9 @@ namespace BreakoutPractice.Src
             _numRows = RNG.Next(1, 6);
             _numCols = RNG.Next(7, 13);
 
-            for (int row = 0; row < _numRows; row++)
+            for (int row = 1; row < _numRows; row++)
             {
-                for (int col = 0; col < _numCols; col++)
+                for (int col = 1; col < _numCols; col++)
                 {
                     // Calculate x and y coordinates
                     int x = (col - 1) * 32 + 8 + (13 - _numCols) * 16;
