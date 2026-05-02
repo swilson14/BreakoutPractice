@@ -12,6 +12,7 @@ using MonoGame.Extended.ViewportAdapters;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks.Sources;
 
 
 namespace BreakoutPractice
@@ -27,6 +28,8 @@ namespace BreakoutPractice
         private KeyboardInfo _keyboard;
         private FrameCounter _frameCounter;
         private LevelMaker _levelMaker;
+        private Random _random;
+
 
         // Fonts
         private SpriteFont _smallFont;
@@ -60,10 +63,17 @@ namespace BreakoutPractice
         private SoundEffect _highScoreSound;
         private SoundEffect _pauseSound;
         private Song _music;
+
+        // Game Objects
         private Paddle _paddle;
         private Ball _ball;
-        private Random random;
         private Brick _brickTemplate;
+        private Hud _hud;
+
+        // Game stats
+        private int _score;
+        private int _health;
+
 
         public Game1()
         {
@@ -90,14 +100,18 @@ namespace BreakoutPractice
 
             _paddle = new Paddle(_paddleSprites);
             
-            random = new Random();
-            int ballSkin = random.Next(7);
+            _random = new Random();
+            int ballSkin = _random.Next(7);
 
             _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
-
             _brickTemplate = new Brick(_brickHitSound2, 0, 0, _brickSprites);
 
-            _levelMaker = new LevelMaker(random, _brickTemplate);
+            _levelMaker = new LevelMaker(_random, _brickTemplate);
+
+            _health = 3;
+            _score = 0;
+
+            _hud = new Hud(_health, _score, _heartSprites, _smallFont);
 
             _stateMachine = new StateMachine();
 
@@ -122,7 +136,7 @@ namespace BreakoutPractice
             _stateMachine.States = new Dictionary<string, State>
             {
                 { "start", new StartState(_stateMachine, soundEffects, _largeFont, _mediumFont)},
-                { "play", new PlayState(_stateMachine, _paddle, soundEffects, _largeFont, _ball, random, _levelMaker)},
+                { "play", new PlayState(_stateMachine, _paddle, soundEffects, _largeFont, _ball, _random, _levelMaker)},
             };
 
             _stateMachine.ChangeState("start");

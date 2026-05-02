@@ -39,7 +39,6 @@ namespace BreakoutPractice.Src.States
 
             int skin = _random.Next(7);
             _ball = new Ball(skin, _wallHit, _ballSprites);
-
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)

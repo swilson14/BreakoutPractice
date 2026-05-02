@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace BreakoutPractice.Src.States
 {
@@ -20,17 +21,17 @@ namespace BreakoutPractice.Src.States
         private SpriteFont _largeFont;
         private bool _paused;
         private List<Brick> _bricks;
+        private int _health;
+        private int _score;
+        private Hud _hud;
 
-
-        public PlayState(StateMachine stateMachine, Paddle paddle, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Ball ball, Random random, LevelMaker levelMaker) : base(stateMachine)
+        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, LevelMaker levelMaker, Hud hud) : base(stateMachine)
         {
-            _paddle = paddle;
             _pauseSound = gameSounds["pause"];
             _largeFont = largeFont;
-            _ball = ball;
             _paddleHit = gameSounds["paddle_hit"];
 
-            int ballDx = random.Next(-200,201);
+            int ballDx = random.Next(-200, 201);
             int ballDy = random.Next(-60, -51);
 
             _ball.Velocity = new Vector2(ballDx, ballDy);
@@ -38,6 +39,16 @@ namespace BreakoutPractice.Src.States
             _ball.X = Constants.VIRTUAL_WIDTH / 2 - 4;
             _ball.Y = Constants.VIRTUAL_HEIGHT - 42;
             _bricks = levelMaker.CreateMap();
+            _hud = hud;
+        }
+
+        public override void Enter(params object[] args)
+        {
+            _paddle = (Paddle)args[0];
+            _bricks = (List<Brick>)args[1];
+            _health = (int)args[2];
+            _score = (int)args[3];
+            _ball = (Ball)args[4];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -63,6 +74,7 @@ namespace BreakoutPractice.Src.States
 
             _paddle.Update(gameTime, keyboard);
             _ball.Update(gameTime);
+            _hud.Update(_health, _score);
 
             if (_ball.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
             {
@@ -151,6 +163,7 @@ namespace BreakoutPractice.Src.States
 
             _paddle.Draw(spriteBatch);
             _ball.Draw(spriteBatch);
+            _hud.Draw(spriteBatch);
 
             if (_paused)
             {
