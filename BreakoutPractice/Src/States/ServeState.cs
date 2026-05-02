@@ -22,12 +22,14 @@ namespace BreakoutPractice.Src.States
         private Random _random;
         private List<Sprite> _ballSprites;
         private SoundEffect _wallHit;
+        private Hud _hud;
 
-        public ServeState(StateMachine stateMachine, List<Sprite> ballSprites, SoundEffect wallHit, Random random) : base(stateMachine)
+        public ServeState(StateMachine stateMachine, List<Sprite> ballSprites, SoundEffect wallHit, Random random, Hud hud) : base(stateMachine)
         {
             _random = random;
             _ballSprites = ballSprites;
             _wallHit = wallHit;
+            _hud = hud;
         }
 
         public override void Enter(params object[] args)
@@ -44,6 +46,7 @@ namespace BreakoutPractice.Src.States
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
         {
             _paddle.Update(gameTime, keyboard);
+            _hud.Update(_health, _score);
             // ball follows the player
             _ball.X = _paddle.X + (_paddle.Width / 2);
             _ball.Y = _paddle.Y - 8;
@@ -58,14 +61,12 @@ namespace BreakoutPractice.Src.States
         {
             _paddle.Draw(spriteBatch);
             _ball.Draw(spriteBatch);
+            _hud.Draw(spriteBatch);
 
             foreach (Brick brick in _bricks)
             {
                 brick.Draw(spriteBatch);
             }
-
-
-
         }
     }
 }

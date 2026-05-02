@@ -18,14 +18,24 @@ namespace BreakoutPractice.Src.States
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
         private SoundEffect _confirmSound;
+        private List<Brick> _bricks;
+        private Paddle _paddle;
+        private int _health;
+        private int _score;
 
-        public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, SpriteFont mediumFont) : base(stateMachine)
+
+
+        public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, Dictionary<string,SpriteFont> fonts, LevelMaker levelMaker, Paddle paddle, int health, int score) : base(stateMachine)
         {
             highlighted = 1;
             _paddleHitSound = gameSounds["paddle_hit"];
-            _largeFont = largeFont;
-            _mediumFont = mediumFont;
+            _largeFont = fonts["large"];
+            _mediumFont = fonts["medium"];
             _confirmSound = gameSounds["confirm"];
+            _bricks = levelMaker.CreateMap();
+            _paddle = paddle;
+            _health = health;
+            _score = score;
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -49,7 +59,7 @@ namespace BreakoutPractice.Src.States
 
                 if (highlighted == 1) 
                 {
-                    _stateMachine.ChangeState("play");
+                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score);
                 }
             }
 

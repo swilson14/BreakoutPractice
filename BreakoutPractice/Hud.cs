@@ -19,6 +19,7 @@ namespace BreakoutPractice
 
         public Hud(int health, int score, List<Sprite> heartSprites, SpriteFont smallFont)
         {
+            _heartSprites = heartSprites;
             _health = health;
             _score = score;
             _smallFont = smallFont;
@@ -40,13 +41,13 @@ namespace BreakoutPractice
         {
             int healthX = Constants.VIRTUAL_WIDTH - 100;
 
-            for (int i = 1; i < _health; i++)
+            for (int i = 0; i < _health; i++)
             {
                 _heartSprites[0].Draw(spriteBatch,new Vector2(healthX, 4));
                 healthX += 11;
             }
 
-            for (int i = 1; i < 3 - _health; i++)
+            for (int i = 0; i < 3 - _health; i++)
             {
                 _heartSprites[1].Draw(spriteBatch, new Vector2(healthX, 4));
                 healthX = healthX += 11;

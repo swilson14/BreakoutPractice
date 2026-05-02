@@ -43,6 +43,7 @@ namespace BreakoutPractice
         private Texture2D _hearts;
         private Texture2D _particle;
         private TextureAtlas _atlas;
+        private TextureAtlas _heartsAtlas;
         private List<Sprite> _paddleSprites = new List<Sprite>();
         private List<Sprite> _ballSprites = new List<Sprite>();
         private List<Sprite> _brickSprites = new List<Sprite>();
@@ -132,11 +133,20 @@ namespace BreakoutPractice
                 {"pause", _pauseSound},
             };
 
+            Dictionary<string, SpriteFont> fonts = new Dictionary<string, SpriteFont>
+            {
+                { "small", _smallFont },
+                { "medium", _mediumFont },
+                { "large", _largeFont },
+            };
+
     
             _stateMachine.States = new Dictionary<string, State>
             {
-                { "start", new StartState(_stateMachine, soundEffects, _largeFont, _mediumFont)},
-                { "play", new PlayState(_stateMachine, _paddle, soundEffects, _largeFont, _ball, _random, _levelMaker)},
+                { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
+                { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud)},
+                { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud)},
+                { "GameOver", new GameOverState(_stateMachine, fonts)}
             };
 
             _stateMachine.ChangeState("start");
@@ -160,6 +170,7 @@ namespace BreakoutPractice
 
             // TextureAtlas
             _atlas = new TextureAtlas(_main);
+            _heartsAtlas = new TextureAtlas(_hearts);
             PopulatePaddleSprites();
             PopulateBallSprites();
             PopulateBrickSprites();
@@ -186,19 +197,19 @@ namespace BreakoutPractice
 
         private void PopulateHeartSprites()
         {
-            int tileWidth = 9;
-            int tileHeight = 10;
+            int tileWidth = 10;
+            int tileHeight = 9;
 
-            float sheetWidth = _atlas.Texture.Width / tileWidth;
-            float sheetHeight = _atlas.Texture.Height / tileHeight;
+            float sheetWidth = _heartsAtlas.Texture.Width / tileWidth;
+            float sheetHeight = _heartsAtlas.Texture.Height / tileHeight;
 
             int count = 1;
-            for (int i = 0; i < sheetHeight-1; i++)
+            for (int i = 0; i < sheetHeight; i++)
             {
-                for (int j = 0; j < sheetWidth-1; j++)
+                for (int j = 0; j < sheetWidth; j++)
                 {
-                    _atlas.AddRegion($"heart-{count}", j * tileWidth, i * tileHeight, tileWidth, tileHeight);
-                    _heartSprites.Add(_atlas.CreateSprite($"heart-{count}"));
+                    _heartsAtlas.AddRegion($"heart-{count}", j * tileWidth, i * tileHeight, tileWidth, tileHeight);
+                    _heartSprites.Add(_heartsAtlas.CreateSprite($"heart-{count}"));
                     count++;
                 }
             }

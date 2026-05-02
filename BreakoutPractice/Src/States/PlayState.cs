@@ -18,28 +18,23 @@ namespace BreakoutPractice.Src.States
         private Ball _ball;
         private SoundEffect _pauseSound;
         private SoundEffect _paddleHit;
+        private SoundEffect _hurtSound;
         private SpriteFont _largeFont;
         private bool _paused;
         private List<Brick> _bricks;
         private int _health;
         private int _score;
         private Hud _hud;
+        private Random _random;
 
-        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, LevelMaker levelMaker, Hud hud) : base(stateMachine)
+        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud) : base(stateMachine)
         {
             _pauseSound = gameSounds["pause"];
             _largeFont = largeFont;
             _paddleHit = gameSounds["paddle_hit"];
-
-            int ballDx = random.Next(-200, 201);
-            int ballDy = random.Next(-60, -51);
-
-            _ball.Velocity = new Vector2(ballDx, ballDy);
-
-            _ball.X = Constants.VIRTUAL_WIDTH / 2 - 4;
-            _ball.Y = Constants.VIRTUAL_HEIGHT - 42;
-            _bricks = levelMaker.CreateMap();
+            _hurtSound = gameSounds["hurt"];
             _hud = hud;
+            _random = random;
         }
 
         public override void Enter(params object[] args)
@@ -49,6 +44,10 @@ namespace BreakoutPractice.Src.States
             _health = (int)args[2];
             _score = (int)args[3];
             _ball = (Ball)args[4];
+
+            int ballDx = _random.Next(-200, 201);
+            int ballDy = _random.Next(-60, -51);
+            _ball.Velocity = new Vector2(ballDx, ballDy);
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -108,6 +107,9 @@ namespace BreakoutPractice.Src.States
             {
                 if (brick.Active && _ball.Collides(new Rectangle((int)brick.X, (int)brick.Y, brick.Width, brick.Height)))
                 {
+
+                    _score += 10;
+
                     brick.BrickHit();
                     int ballRadius = 4;
                     float brickWidth = brick.Width;
@@ -146,6 +148,21 @@ namespace BreakoutPractice.Src.States
                     }
                     _ball.Velocity = new Vector2(_ball.Velocity.X, (float)(_ball.Velocity.Y * 1.02));
                     break;
+                }
+            }
+
+            if (_ball.Y >= Constants.VIRTUAL_HEIGHT)
+            {
+                _health -= 1;
+                _hurtSound.Play();
+
+                if (_health <= 0)
+                {
+                    _stateMachine.ChangeState("GameOver",_score);
+                }
+                else 
+                {
+                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score);
                 }
             }
 
