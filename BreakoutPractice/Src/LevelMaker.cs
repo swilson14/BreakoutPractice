@@ -24,11 +24,11 @@ namespace BreakoutPractice.Src
         {
             List<Brick> map = new List<Brick>();
             _numRows = RNG.Next(1, 6);
-            _numCols = RNG.Next(7, 13);
+            _numCols = RNG.Next(7, 14);
 
-            for (int row = 1; row < _numRows; row++)
+            for (int row = 1; row <= _numRows; row++)
             {
-                for (int col = 1; col < _numCols; col++)
+                for (int col = 1; col <= _numCols; col++)
                 {
                     // Calculate x and y coordinates
                     int x = (col - 1) * 32 + 8 + (13 - _numCols) * 16;

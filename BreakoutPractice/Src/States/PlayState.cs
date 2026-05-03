@@ -121,13 +121,12 @@ namespace BreakoutPractice.Src.States
                     // Depth
                     Vector2 collisionDepth = new Vector2(brickWidth / 2 + ballRadius - Math.Abs(collisionOffset.X),
                                                          brickHeight / 2 + ballRadius - Math.Abs(collisionOffset.Y));
-
                     if (collisionDepth.X < collisionDepth.Y)
                     {
                         _ball.Velocity = new Vector2(-_ball.Velocity.X, _ball.Velocity.Y);
                         if (collisionOffset.X > 0)
                         {
-                            _ball.X += -collisionDepth.X;
+                            _ball.X -= collisionDepth.X;
                         }
                         else 
                         {
@@ -139,7 +138,7 @@ namespace BreakoutPractice.Src.States
                         _ball.Velocity = new Vector2(_ball.Velocity.X, -_ball.Velocity.Y);
                         if (collisionOffset.Y > 0)
                         {
-                            _ball.Y += -collisionDepth.Y;
+                            _ball.Y -= collisionDepth.Y;
                         }
                         else
                         {
