@@ -58,7 +58,8 @@ namespace BreakoutPractice
         private void DrawScore(SpriteBatch spriteBatch)
         {
             string scoreText = $"Score: {_score}";
-            spriteBatch.DrawString(_smallFont, scoreText, new Vector2(Constants.VIRTUAL_WIDTH-50,5), Color.White);
+            float scoreWidth = _smallFont.MeasureString(scoreText).X;
+            spriteBatch.DrawString(_smallFont, scoreText, new Vector2(Constants.VIRTUAL_WIDTH-scoreWidth,5), Color.White);
         }
 
     }

@@ -231,8 +231,12 @@ namespace BreakoutPractice
                     x += 32;
                     count++;
                 }
+                x = 0;
                 y+= 16;
             }
+
+            x = 0;
+
 
             for (int j = 0; j < 3; j++)
             {

@@ -54,13 +54,13 @@ namespace BreakoutPractice.Src
             for (int row = 1; row <= _numRows; row++)
             {
                 bool skipPattern = false;
-                if (_random.Next(1) == 1)
+                if (_random.Next(2) == 1)
                 {
                     skipPattern = true;
                 }
 
                 bool altPattern = false;
-                if (_random.Next(1) == 1)
+                if (_random.Next(2) == 1)
                 {
                     altPattern = true;
                 }
@@ -71,13 +71,13 @@ namespace BreakoutPractice.Src
                 int altTier2 =  _random.Next(1, highestTier + 1);
 
                 bool skipFlag = false;
-                if (_random.Next(1) == 1)
+                if (_random.Next(2) == 1)
                 {
                     skipFlag = true;
                 }
 
                 bool altFlag = false;
-                if (_random.Next(1) == 1)
+                if (_random.Next(2) == 1)
                 {
                     altFlag = true;
                 }
