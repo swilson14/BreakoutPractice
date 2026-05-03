@@ -32,7 +32,7 @@ namespace BreakoutPractice.Src.States
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
             _confirmSound = gameSounds["confirm"];
-            _bricks = levelMaker.CreateMap();
+            _bricks = levelMaker.CreateMap(1);
             _paddle = paddle;
             _health = health;
             _score = score;

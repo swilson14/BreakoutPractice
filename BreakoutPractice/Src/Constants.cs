@@ -16,5 +16,10 @@ namespace BreakoutPractice.Src
 
         // Paddle
         public const int PADDLE_SPEED = 200;
+
+        // Bricks
+        public const int DEFAULT_BRICK_TIER = 0;
+        public const int DEFAULT_BRICK_COLOR = 1;
+
     }
 }

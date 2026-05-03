@@ -23,18 +23,17 @@ namespace BreakoutPractice.Src
         public Sprite brickSprite { get; set; }
         public List<Sprite> BrickSprites { get; }
 
-
-        private int _tier;
-        private int _color;
+        public int Tier { get; set; }
+        public int Color { get; set; }
    
 
         public SoundEffect BrickHit2 { get; }
 
-        public Brick(SoundEffect brickHit, float x, float y, List<Sprite> brickSprites)
+        public Brick(SoundEffect brickHit, float x, float y, List<Sprite> brickSprites, int tier, int color)
         {
             BrickSprites = brickSprites;
-            _tier = 0;
-            _color = 1;
+            Tier = tier;
+            Color = color;
             BrickHit2 = brickHit;
             X = x;
             Y = y;
@@ -42,7 +41,7 @@ namespace BreakoutPractice.Src
             Height = 16;
             Active = true;
             
-            int spriteIndex = ((_color - 1) * 4) + _tier;
+            int spriteIndex = ((Color - 1) * 4) + Tier;
             brickSprite = BrickSprites[spriteIndex];
         }
 

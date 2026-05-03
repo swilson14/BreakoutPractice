@@ -105,7 +105,8 @@ namespace BreakoutPractice
             int ballSkin = _random.Next(7);
 
             _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
-            _brickTemplate = new Brick(_brickHitSound2, 0, 0, _brickSprites);
+
+            _brickTemplate = new Brick(_brickHitSound2, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR);
 
             _levelMaker = new LevelMaker(_random, _brickTemplate);
 

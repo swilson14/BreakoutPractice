@@ -8,36 +8,134 @@ namespace BreakoutPractice.Src
 {
     public class LevelMaker
     {
+        enum LevelPattern
+        {
+            NONE,
+            SINGLE_PYRAMID,
+            MULTI_PYRAMID,
+        }
+
+        enum RowPattern 
+        {
+            SOLID,
+            ALTERNATE,
+            SKIP,
+            NONE
+        }
+
         private int _numRows;
         private int _numCols;
-        public Random RNG;
+        public Random _random;
         public Brick _template;
-
 
         public LevelMaker(Random random, Brick template)
         {
-            RNG = random;
+            _random = random;
             _template = template;
         }
 
-        public List<Brick> CreateMap()
+        public List<Brick> CreateMap(int level)
         {
             List<Brick> map = new List<Brick>();
-            _numRows = RNG.Next(1, 6);
-            _numCols = RNG.Next(7, 14);
+
+            _numRows = _random.Next(1, 6);
+            _numCols = _random.Next(7, 14);
+
+            // Ensure number of columns is odd.
+            if (_numCols % 2 == 0)
+            {
+                _numCols += 1;
+            }
+
+            // Highest tier and color based on level.
+            int highestTier = Math.Min(3, (int)Math.Floor(level / 5.0));
+            int highestColor = Math.Min(5, level % 5 + 3);
 
             for (int row = 1; row <= _numRows; row++)
             {
+                bool skipPattern = false;
+                if (_random.Next(1) == 1)
+                {
+                    skipPattern = true;
+                }
+
+                bool altPattern = false;
+                if (_random.Next(1) == 1)
+                {
+                    altPattern = true;
+                }
+
+                int altColor1 = _random.Next(1, highestColor + 1);
+                int altColor2 = _random.Next(1, highestColor + 1);
+                int altTier1 = _random.Next(1, highestTier +1 );
+                int altTier2 =  _random.Next(1, highestTier + 1);
+
+                bool skipFlag = false;
+                if (_random.Next(1) == 1)
+                {
+                    skipFlag = true;
+                }
+
+                bool altFlag = false;
+                if (_random.Next(1) == 1)
+                {
+                    altFlag = true;
+                }
+
+                int solidColor = _random.Next(1, highestColor + 1);
+                int solidTier = _random.Next(0,highestTier + 1);
+
                 for (int col = 1; col <= _numCols; col++)
                 {
+                    if (skipPattern && skipFlag)
+                    {
+                        skipFlag = false;
+                        continue;
+                    }
+                    else 
+                    {
+                        skipFlag = !skipFlag;
+                    }
+
                     // Calculate x and y coordinates
                     int x = (col - 1) * 32 + 8 + (13 - _numCols) * 16;
                     int y = row * 16;
-                    map.Add(new Brick(_template.BrickHit2, x, y, _template.BrickSprites));
+
+                    int tier = Constants.DEFAULT_BRICK_TIER;
+                    int color = Constants.DEFAULT_BRICK_COLOR;
+                    if (altPattern && altFlag)
+                    {
+                        color = altColor1;
+                        tier = altTier1;
+                        altFlag = !altFlag;
+                    }
+                    else
+                    {
+                        color = altColor2;
+                        tier = altTier2;
+                        altFlag = !altFlag;
+                    }
+
+                    if (!altPattern)
+                    {
+                        color = solidColor;
+                        tier = solidTier;
+                    }
+
+                    Brick brick = new Brick(_template.BrickHit2, x, y, _template.BrickSprites, tier, color);
+
+                    map.Add(brick);
                 }
             }
-            return map;
-        }
-           
+
+            if (map.Count == 0)
+            {
+                return this.CreateMap(level);
+            }
+            else
+            {
+                return map;
+            }          
+        }          
     }
 }
