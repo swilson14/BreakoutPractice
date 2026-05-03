@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Particles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,13 +27,15 @@ namespace BreakoutPractice.Src
 
         private int _numRows;
         private int _numCols;
-        public Random _random;
-        public Brick _template;
+        private Random _random;
+        private Brick _template;
+        private ParticleEffect _particleEffect;
 
-        public LevelMaker(Random random, Brick template)
+        public LevelMaker(Random random, Brick template, ParticleEffect particleEffect)
         {
             _random = random;
             _template = template;
+            _particleEffect = particleEffect;
         }
 
         public List<Brick> CreateMap(int level)
@@ -67,8 +71,9 @@ namespace BreakoutPractice.Src
 
                 int altColor1 = _random.Next(1, highestColor + 1);
                 int altColor2 = _random.Next(1, highestColor + 1);
-                int altTier1 = _random.Next(1, highestTier +1 );
-                int altTier2 =  _random.Next(1, highestTier + 1);
+                
+                int altTier1 = _random.Next(0, highestTier + 1);
+                int altTier2 =  _random.Next(0, highestTier + 1);
 
                 bool skipFlag = false;
                 if (_random.Next(2) == 1)
@@ -82,8 +87,8 @@ namespace BreakoutPractice.Src
                     altFlag = true;
                 }
 
-                int solidColor = _random.Next(1, highestColor + 1);
-                int solidTier = _random.Next(0,highestTier + 1);
+                int solidColor = _random.Next(1, highestColor);
+                int solidTier = _random.Next(0,highestTier);
 
                 for (int col = 1; col <= _numCols; col++)
                 {
@@ -122,7 +127,7 @@ namespace BreakoutPractice.Src
                         tier = solidTier;
                     }
 
-                    Brick brick = new Brick(_template.BrickHit2, x, y, _template.BrickSprites, tier, color);
+                    Brick brick = new Brick(_template.SoundEffects, x, y, _template.BrickSprites, tier, color, _particleEffect);
 
                     map.Add(brick);
                 }

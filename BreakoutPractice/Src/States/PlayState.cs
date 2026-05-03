@@ -108,7 +108,7 @@ namespace BreakoutPractice.Src.States
                 if (brick.Active && _ball.Collides(new Rectangle((int)brick.X, (int)brick.Y, brick.Width, brick.Height)))
                 {
 
-                    _score += 10;
+                    _score += (brick.Tier * 200 + brick.Color * 25);
 
                     brick.BrickHit();
                     int ballRadius = 4;

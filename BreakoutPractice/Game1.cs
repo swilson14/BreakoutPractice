@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended;
+
+using MonoGame.Extended.Particles;
+using MonoGame.Extended.Particles.Data;
+using MonoGame.Extended.Particles.Modifiers;
+using MonoGame.Extended.Particles.Modifiers.Interpolators;
+using MonoGame.Extended.Particles.Profiles;
 using MonoGame.Extended.ViewportAdapters;
 using System;
 using System.Collections.Generic;
@@ -48,6 +54,8 @@ namespace BreakoutPractice
         private List<Sprite> _ballSprites = new List<Sprite>();
         private List<Sprite> _brickSprites = new List<Sprite>();
         private List<Sprite> _heartSprites = new List<Sprite>();
+        private ParticleEffect _particleEffect;
+
 
         // Audio
         private SoundEffect _paddleHitSound;
@@ -102,20 +110,6 @@ namespace BreakoutPractice
             _paddle = new Paddle(_paddleSprites);
             
             _random = new Random();
-            int ballSkin = _random.Next(7);
-
-            _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
-
-            _brickTemplate = new Brick(_brickHitSound2, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR);
-
-            _levelMaker = new LevelMaker(_random, _brickTemplate);
-
-            _health = 3;
-            _score = 0;
-
-            _hud = new Hud(_health, _score, _heartSprites, _smallFont);
-
-            _stateMachine = new StateMachine();
 
             Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>
             {
@@ -141,7 +135,21 @@ namespace BreakoutPractice
                 { "large", _largeFont },
             };
 
-    
+            int ballSkin = _random.Next(7);
+
+            _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
+
+            _brickTemplate = new Brick(soundEffects, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR, _particleEffect);
+
+            _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect);
+
+            _health = 3;
+            _score = 0;
+
+            _hud = new Hud(_health, _score, _heartSprites, _smallFont);
+
+            _stateMachine = new StateMachine();
+
             _stateMachine.States = new Dictionary<string, State>
             {
                 { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
@@ -169,6 +177,8 @@ namespace BreakoutPractice
             _hearts = Content.Load<Texture2D>("Graphics/hearts");
             _particle = Content.Load<Texture2D>("Graphics/particle");
 
+            CreateParticleEffects();
+
             // TextureAtlas
             _atlas = new TextureAtlas(_main);
             _heartsAtlas = new TextureAtlas(_hearts);
@@ -176,6 +186,7 @@ namespace BreakoutPractice
             PopulateBallSprites();
             PopulateBrickSprites();
             PopulateHeartSprites();
+
 
             // Audio
             // Sound Effects
@@ -192,8 +203,73 @@ namespace BreakoutPractice
             _recoverSound = Content.Load<SoundEffect>("Sounds/recover");
             _highScoreSound = Content.Load<SoundEffect>("Sounds/high_score");
             _pauseSound = Content.Load<SoundEffect>("Sounds/pause");
+
             // Song
             _music = Content.Load<Song>("Sounds/music");
+        }
+
+        private void CreateParticleEffects()
+        {
+            Vector2 viewportCenter = GraphicsDevice.Viewport.Bounds.Center.ToVector2();
+
+            _particleEffect = new ParticleEffect("Explosion")
+            {
+                Position = viewportCenter,
+
+                // Disable auto trigger - we'll trigger manually
+                AutoTrigger = false,
+            };
+
+            ParticleEmitter emitter = new ParticleEmitter(2000)
+            {
+                Name = "Explosion Emitter",
+                LifeSpan = 0.5f,
+                TextureRegion = new MonoGame.Extended.Graphics.Texture2DRegion(_particle),
+
+                // Change the profile to make particles explode outward
+                Profile = Profile.Circle(10, CircleRadiation.Out),
+
+                Parameters = new ParticleReleaseParameters
+                {
+                    Quantity = new ParticleInt32Parameter(64),
+
+                    // Increase random speed to 100-200
+                    Speed = new ParticleFloatParameter(-15f, 15f),
+
+                    Color = new ParticleColorParameter(new Vector3(0.0f, 1.0f, 0.6f)),
+                    Scale = new ParticleVector2Parameter(new Vector2(1.0f, 1.0f))
+                }
+            };
+
+            emitter.Modifiers.Add(new LinearGravityModifier
+            {
+                // Change gravity to move down
+                Direction = Vector2.UnitY,
+
+                // Strength increased to 200
+                Strength = 200f
+            });
+
+            emitter.Modifiers.Add(new AgeModifier
+            {
+                Interpolators =
+        {
+            new OpacityInterpolator
+            {
+                StartValue = 1.0f,
+                EndValue = 0.0f
+            }
+        }
+            });
+
+            // Add drag modifier for air resistance
+            emitter.Modifiers.Add(new DragModifier
+            {
+                Density = 0.5f,
+                DragCoefficient = 0.3f
+            });
+
+            _particleEffect.Emitters.Add(emitter);
         }
 
         private void PopulateHeartSprites()
@@ -301,6 +377,8 @@ namespace BreakoutPractice
             _keyboard.Update();
             _stateMachine.Update(gameTime, _keyboard);
 
+            _particleEffect.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -325,6 +403,9 @@ namespace BreakoutPractice
             _spriteBatch.Draw(_background, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero,
                 new Vector2(Constants.VIRTUAL_WIDTH / (backgroundWidth - 1.0f), Constants.VIRTUAL_HEIGHT / (backgroundHeight - 1.0f)), // scale
                 SpriteEffects.None, 0.0f);
+
+            _spriteBatch.Draw(_particleEffect);
+
 
             // Draw FPS
             _spriteBatch.DrawString(_smallFont, fps, new Vector2(5), Color.White);
