@@ -22,7 +22,7 @@ namespace BreakoutPractice.Src.States
         private Paddle _paddle;
         private int _health;
         private int _score;
-
+        private int _level;
 
 
         public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, Dictionary<string,SpriteFont> fonts, LevelMaker levelMaker, Paddle paddle, int health, int score) : base(stateMachine)
@@ -36,6 +36,7 @@ namespace BreakoutPractice.Src.States
             _paddle = paddle;
             _health = health;
             _score = score;
+            _level = 1;
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -59,7 +60,7 @@ namespace BreakoutPractice.Src.States
 
                 if (highlighted == 1) 
                 {
-                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score);
+                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level);
                 }
             }
 

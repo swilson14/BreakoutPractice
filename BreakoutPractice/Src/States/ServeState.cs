@@ -23,13 +23,18 @@ namespace BreakoutPractice.Src.States
         private List<Sprite> _ballSprites;
         private SoundEffect _wallHit;
         private Hud _hud;
+        private int _level;
+        private SpriteFont _largeFont;
+        private SpriteFont _mediumFont;
 
-        public ServeState(StateMachine stateMachine, List<Sprite> ballSprites, SoundEffect wallHit, Random random, Hud hud) : base(stateMachine)
+        public ServeState(StateMachine stateMachine, List<Sprite> ballSprites, SoundEffect wallHit, Random random, Hud hud, Dictionary<string,SpriteFont> fonts) : base(stateMachine)
         {
             _random = random;
             _ballSprites = ballSprites;
             _wallHit = wallHit;
             _hud = hud;
+            _largeFont = fonts["large"];
+            _mediumFont = fonts["medium"];
         }
 
         public override void Enter(params object[] args)
@@ -38,6 +43,7 @@ namespace BreakoutPractice.Src.States
             _bricks = (List<Brick>)args[1];
             _health = (int)args[2];
             _score = (int)args[3];
+            _level = (int)args[4];
 
             int skin = _random.Next(7);
             _ball = new Ball(skin, _wallHit, _ballSprites);
@@ -61,12 +67,28 @@ namespace BreakoutPractice.Src.States
         {
             _paddle.Draw(spriteBatch);
             _ball.Draw(spriteBatch);
-            _hud.Draw(spriteBatch);
 
             foreach (Brick brick in _bricks)
             {
                 brick.Draw(spriteBatch);
             }
+
+            _hud.Draw(spriteBatch);
+
+            string completeText = $"Level {_level}";
+            float completeTextWidth = _largeFont.MeasureString(completeText).X;
+
+            spriteBatch.DrawString(_largeFont, completeText,
+                new Vector2((Constants.VIRTUAL_WIDTH - completeTextWidth) / 2, Constants.VIRTUAL_HEIGHT / 4),
+                Color.White);
+
+            string instructionsText = "Press Enter to serve!";
+            float instructionsWidth = _mediumFont.MeasureString(instructionsText).X;
+
+            spriteBatch.DrawString(_mediumFont, instructionsText,
+                new Vector2((Constants.VIRTUAL_WIDTH - instructionsWidth) / 2, Constants.VIRTUAL_HEIGHT / 2),
+                Color.White);
+
         }
     }
 }

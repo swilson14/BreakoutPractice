@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace BreakoutPractice.Src.States
 {
@@ -19,11 +18,13 @@ namespace BreakoutPractice.Src.States
         private SoundEffect _pauseSound;
         private SoundEffect _paddleHit;
         private SoundEffect _hurtSound;
+        private SoundEffect _victorySound;
         private SpriteFont _largeFont;
         private bool _paused;
         private List<Brick> _bricks;
         private int _health;
         private int _score;
+        private int _level;
         private Hud _hud;
         private Random _random;
 
@@ -33,6 +34,7 @@ namespace BreakoutPractice.Src.States
             _largeFont = largeFont;
             _paddleHit = gameSounds["paddle_hit"];
             _hurtSound = gameSounds["hurt"];
+            _victorySound = gameSounds["victory"];
             _hud = hud;
             _random = random;
         }
@@ -44,6 +46,7 @@ namespace BreakoutPractice.Src.States
             _health = (int)args[2];
             _score = (int)args[3];
             _ball = (Ball)args[4];
+            _level = (int)args[5];
 
             int ballDx = _random.Next(-200, 201);
             int ballDy = _random.Next(-60, -51);
@@ -111,6 +114,15 @@ namespace BreakoutPractice.Src.States
                     _score += (brick.Tier * 200 + brick.Color * 25);
 
                     brick.BrickHit();
+
+                    if (CheckVictory())
+                    {
+                        _victorySound.Play();
+                        _stateMachine.ChangeState("victory", _paddle, _health, _score, _ball);
+                    }
+
+
+
                     int ballRadius = (int)(_ball.Width / 2f);
                     float brickWidth = brick.Width;
                     float brickHeight = brick.Height;
@@ -168,6 +180,16 @@ namespace BreakoutPractice.Src.States
             // Escape/Quit Logic is no longer global
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
                 Exit();
+        }
+
+        private bool CheckVictory()
+        {
+            if (_bricks.Select(b => b.Active).Any())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

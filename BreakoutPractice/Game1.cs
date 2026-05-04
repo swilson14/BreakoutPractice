@@ -154,8 +154,9 @@ namespace BreakoutPractice
             {
                 { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
                 { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud)},
-                { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud)},
-                { "GameOver", new GameOverState(_stateMachine, fonts)}
+                { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud, fonts)},
+                { "GameOver", new GameOverState(_stateMachine, fonts)},
+                {"victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) }
             };
 
             _stateMachine.ChangeState("start");
@@ -227,7 +228,7 @@ namespace BreakoutPractice
                 TextureRegion = new MonoGame.Extended.Graphics.Texture2DRegion(_particle),
 
                 // Change the profile to make particles explode outward
-                Profile = Profile.Circle(10, CircleRadiation.Out),
+                Profile = Profile.Circle(15, CircleRadiation.Out),
 
                 Parameters = new ParticleReleaseParameters
                 {
