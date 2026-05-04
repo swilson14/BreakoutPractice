@@ -33,10 +33,10 @@ namespace BreakoutPractice.Src.States
 
         public override void Enter(params object[] args)
         {
-            _level = (int)args[0];
-            _score = (int)args[1];
-            _paddle = (Paddle)args[2];
-            _health = (int)args[3];
+            _level = (int)args[0];     
+            _paddle = (Paddle)args[1];
+            _health = (int)args[2];
+            _score = (int)args[3];
             _ball = (Ball)args[4];
         }
 

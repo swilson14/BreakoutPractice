@@ -23,6 +23,7 @@ namespace BreakoutPractice.Src.States
         private int _health;
         private int _score;
         private int _level;
+        private LevelMaker _levelMaker;
 
 
         public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, Dictionary<string,SpriteFont> fonts, LevelMaker levelMaker, Paddle paddle, int health, int score) : base(stateMachine)
@@ -32,11 +33,17 @@ namespace BreakoutPractice.Src.States
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
             _confirmSound = gameSounds["confirm"];
-            _bricks = levelMaker.CreateMap(1);
             _paddle = paddle;
             _health = health;
             _score = score;
             _level = 1;
+            _levelMaker = levelMaker;
+            _bricks = _levelMaker.CreateMap(1);
+        }
+
+        public override void Enter(params object[] args)
+        {
+            _bricks = _levelMaker.CreateMap(1);
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)

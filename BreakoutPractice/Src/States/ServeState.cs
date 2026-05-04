@@ -59,7 +59,7 @@ namespace BreakoutPractice.Src.States
 
             if (keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _ball);
+                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _ball, _level);
             }
         }
 

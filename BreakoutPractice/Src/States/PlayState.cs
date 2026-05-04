@@ -118,7 +118,7 @@ namespace BreakoutPractice.Src.States
                     if (CheckVictory())
                     {
                         _victorySound.Play();
-                        _stateMachine.ChangeState("victory", _paddle, _health, _score, _ball);
+                        _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _ball);
                     }
 
 
@@ -173,7 +173,7 @@ namespace BreakoutPractice.Src.States
                 }
                 else 
                 {
-                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score);
+                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level);
                 }
             }
 
@@ -184,7 +184,7 @@ namespace BreakoutPractice.Src.States
 
         private bool CheckVictory()
         {
-            if (_bricks.Select(b => b.Active).Any())
+            if (_bricks.Any(b => b.Active))
             {
                 return false;
             }

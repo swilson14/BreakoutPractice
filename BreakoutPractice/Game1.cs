@@ -17,6 +17,7 @@ using MonoGame.Extended.Particles.Profiles;
 using MonoGame.Extended.ViewportAdapters;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks.Sources;
 
@@ -82,7 +83,7 @@ namespace BreakoutPractice
         // Game stats
         private int _score;
         private int _health;
-
+        private HighScore[] _highScores;
 
         public Game1()
         {
@@ -158,6 +159,9 @@ namespace BreakoutPractice
                 { "GameOver", new GameOverState(_stateMachine, fonts)},
                 {"victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) }
             };
+
+            _highScores = new HighScore[10];
+            LoadHighScores();
 
             _stateMachine.ChangeState("start");
         }
@@ -407,13 +411,56 @@ namespace BreakoutPractice
 
             _spriteBatch.Draw(_particleEffect);
 
-
             // Draw FPS
             _spriteBatch.DrawString(_smallFont, fps, new Vector2(5), Color.White);
             _stateMachine.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void LoadHighScores()
+        {
+            string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string gameFolder = Path.Combine(dataPath, "breakout");
+            string dataFile = Path.Combine(dataPath, "breakout.dat");
+            Directory.CreateDirectory(gameFolder);
+
+            if (!File.Exists(dataFile))
+            {
+                string scoreText = "";
+
+                for (int i = 0; i < 10; i++) 
+                {
+                    scoreText +=  "AAA\n";
+                    scoreText += $"{i * 1000}";
+                }
+
+                File.WriteAllText(dataFile, scoreText);
+            }
+
+            bool name = true;
+            string currentName = null;
+            int count = 0;
+
+            for (int i = 0; i < _highScores.Length; i++) 
+            {
+                _highScores[i] = new HighScore();
+            }
+           
+            foreach (var line in File.ReadAllLines(dataFile))
+            {
+                if (name)
+                {
+                    _highScores[count].Name = line.Substring(0, 3);
+                }
+                else
+                {
+                    _highScores[count].Score = int.Parse(line);
+                    count++;
+                }
+                name = !name;
+            }
         }
     }
 }
