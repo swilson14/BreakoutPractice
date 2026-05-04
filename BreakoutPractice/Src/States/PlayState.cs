@@ -111,10 +111,10 @@ namespace BreakoutPractice.Src.States
                     _score += (brick.Tier * 200 + brick.Color * 25);
 
                     brick.BrickHit();
-                    int ballRadius = 4;
+                    int ballRadius = (int)(_ball.Width / 2f);
                     float brickWidth = brick.Width;
                     float brickHeight = brick.Height;
-                    Vector2 brickCenter = new Vector2(brick.X + brickWidth / 2, brick.Y + brickWidth / 2);
+                    Vector2 brickCenter = new Vector2(brick.X + brickWidth / 2, brick.Y + brickHeight / 2);
                     Vector2 ballCenter = new Vector2(_ball.X + ballRadius, _ball.Y + ballRadius);
                     Vector2 collisionOffset = brickCenter - ballCenter;
 
