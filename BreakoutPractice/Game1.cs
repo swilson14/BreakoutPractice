@@ -151,19 +151,19 @@ namespace BreakoutPractice
 
             _stateMachine = new StateMachine();
 
+            _highScores = new HighScore[10];
+            LoadHighScores();
+
             _stateMachine.States = new Dictionary<string, State>
             {
                 { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
                 { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud)},
                 { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud, fonts)},
-                { "GameOver", new GameOverState(_stateMachine, fonts)},
-                {"victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) }
+                { "GameOver", new GameOverState(_stateMachine, fonts, soundEffects)},
+                { "victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) }
             };
 
-            _highScores = new HighScore[10];
-            LoadHighScores();
-
-            _stateMachine.ChangeState("start");
+            _stateMachine.ChangeState("start", _highScores);
         }
 
         protected override void LoadContent()
@@ -440,7 +440,6 @@ namespace BreakoutPractice
             }
 
             bool name = true;
-            string currentName = null;
             int count = 0;
 
             for (int i = 0; i < _highScores.Length; i++) 

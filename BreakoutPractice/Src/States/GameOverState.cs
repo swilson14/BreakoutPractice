@@ -1,5 +1,6 @@
 ﻿using BreakoutPractice.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -15,23 +16,49 @@ namespace BreakoutPractice.Src.States
         private int _score;
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
+        private HighScore[] _highScores;
+        private SoundEffect _highScoreSound;
 
-        public GameOverState(StateMachine stateMachine, Dictionary<string, SpriteFont> fonts) : base(stateMachine)
+        public GameOverState(StateMachine stateMachine, Dictionary<string, SpriteFont> fonts, Dictionary<string, SoundEffect> soundEffects) : base(stateMachine)
         {
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
+            _highScoreSound = soundEffects["high_score"];
         }
 
         public override void Enter(params object[] args)
         {
             _score = (int)args[0];
+            _highScores = (HighScore[])args[1];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
         {
             if (keyboard.WasKeyJustPressed(Keys.Enter)) 
             {
-                _stateMachine.ChangeState("start");
+                bool isHighScore = false;
+
+                int scoreIndex = 11;
+
+                for (int i = 9; i >= 0; i--)
+                {
+                    int currentHighScore = _highScores[i].Score;
+                    if (_score > currentHighScore)
+                    {
+                        scoreIndex = i;
+                        isHighScore = true;
+                    }
+                }
+
+                if (isHighScore)
+                {
+                    _highScoreSound.Play();
+                    _stateMachine.ChangeState("enter_high_score", _highScores, _score, scoreIndex);
+                }
+                else
+                {
+                    _stateMachine.ChangeState("start", _highScores);
+                }
             }
 
             // Escape/Quit Logic is no longer global
