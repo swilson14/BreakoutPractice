@@ -27,6 +27,7 @@ namespace BreakoutPractice.Src.States
         private int _level;
         private Hud _hud;
         private Random _random;
+        private HighScoreList _highScores;
 
         public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud) : base(stateMachine)
         {
@@ -47,6 +48,7 @@ namespace BreakoutPractice.Src.States
             _score = (int)args[3];
             _ball = (Ball)args[4];
             _level = (int)args[5];
+            _highScores = (HighScoreList)args[6];
 
             int ballDx = _random.Next(-200, 201);
             int ballDy = _random.Next(-60, -51);
@@ -118,7 +120,7 @@ namespace BreakoutPractice.Src.States
                     if (CheckVictory())
                     {
                         _victorySound.Play();
-                        _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _ball);
+                        _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _ball, _highScores);
                     }
 
 
@@ -169,11 +171,11 @@ namespace BreakoutPractice.Src.States
 
                 if (_health <= 0)
                 {
-                    _stateMachine.ChangeState("GameOver",_score);
+                    _stateMachine.ChangeState("game_over",_score, _highScores);
                 }
                 else 
                 {
-                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level);
+                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
                 }
             }
 

@@ -14,7 +14,7 @@ namespace BreakoutPractice.Src.States
 {
     public class EnterHighScoreState : State
     {
-        private HighScore[] _highScores;
+        private HighScoreList _highScores;
         private int _score;
         private int _scoreIndex;
         private SpriteFont _largeFont;
@@ -30,11 +30,12 @@ namespace BreakoutPractice.Src.States
             _mediumFont = fonts["medium"];
             _smallFont = fonts["small"];
             _selectSound = soundEffects["select"];
+            _highlightedChar = 0;
         }
 
         public override void Enter(params object[] args)
         {
-            _highScores = (HighScore[])args[0];
+            _highScores = (HighScoreList)args[0];
             _score = (int)args[1];
             _scoreIndex = (int)args[2];
         }
@@ -45,46 +46,46 @@ namespace BreakoutPractice.Src.States
             {
                 string name = new string(_chars);
 
-                for (int i = 10; i > _scoreIndex; i--)
+                for (int i = 8; i >= _scoreIndex; i--)
                 {
-                    _highScores[i + 1] = new HighScore
+                    _highScores.HighScores[i + 1] = new HighScore
                     {
-                        Name = _highScores[i].Name,
-                        Score = _highScores[i].Score,
+                        Name = _highScores.HighScores[i].Name,
+                        Score = _highScores.HighScores[i].Score,
                     };
 
                 };
 
-                _highScores[_scoreIndex] = new HighScore
+                _highScores.HighScores[_scoreIndex] = new HighScore
                 {
-                    Name = _highScores[_scoreIndex].Name,
-                    Score = _highScores[_scoreIndex].Score,
+                    Name = name,
+                    Score = _score,
                 };
 
                 // Write to file
                 string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 string gameFolder = Path.Combine(dataPath, "breakout");
-                string dataFile = Path.Combine(dataPath, "breakout.dat");
+                string dataFile = Path.Combine(gameFolder, "breakout.dat");
                 string scoreString = "";
 
                 for (int i = 0; i < 10; i++)
                 {
-                    scoreString += _highScores[i].Name + "\n";
-                    scoreString += _highScores[i].Score + "\n";
+                    scoreString += _highScores.HighScores[i].Name + "\n";
+                    scoreString += _highScores.HighScores[i].Score + "\n";
                 }
 
                 File.WriteAllText(dataFile, scoreString);
                 _stateMachine.ChangeState("high_scores",_highScores);
             }
             
-            if (keyboard.WasKeyJustPressed(Keys.Left) && _highlightedChar > 1)
-            {
-                _highlightedChar++;
-                _selectSound.Play();
-            }
-            else if (keyboard.WasKeyJustPressed(Keys.Right) && _highlightedChar < 3)
+            if (keyboard.WasKeyJustPressed(Keys.Left) && _highlightedChar > 0)
             {
                 _highlightedChar--;
+                _selectSound.Play();
+            }
+            else if (keyboard.WasKeyJustPressed(Keys.Right) && _highlightedChar < 2)
+            {
+                _highlightedChar++;
                 _selectSound.Play();
             }
 
@@ -115,15 +116,15 @@ namespace BreakoutPractice.Src.States
             Color char2Color = Color.White;
             Color char3Color = Color.White;
 
-            if (_highlightedChar == 1)
+            if (_highlightedChar == 0)
             {
                 char1Color = new Color(103, 255, 255, 255);
             }
-            else if (_highlightedChar == 2)
+            else if (_highlightedChar == 1)
             {
                 char2Color = new Color(103, 255, 255, 255);
             }
-            else if (_highlightedChar == 3)
+            else if (_highlightedChar == 2)
             {
                 char3Color = new Color(103, 255, 255, 255);
             }

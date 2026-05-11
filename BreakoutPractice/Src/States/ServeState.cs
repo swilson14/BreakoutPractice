@@ -26,6 +26,7 @@ namespace BreakoutPractice.Src.States
         private int _level;
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
+        private HighScoreList _highScores;
 
         public ServeState(StateMachine stateMachine, List<Sprite> ballSprites, SoundEffect wallHit, Random random, Hud hud, Dictionary<string,SpriteFont> fonts) : base(stateMachine)
         {
@@ -44,6 +45,7 @@ namespace BreakoutPractice.Src.States
             _health = (int)args[2];
             _score = (int)args[3];
             _level = (int)args[4];
+            _highScores = (HighScoreList)args[5];
 
             int skin = _random.Next(7);
             _ball = new Ball(skin, _wallHit, _ballSprites);
@@ -59,7 +61,7 @@ namespace BreakoutPractice.Src.States
 
             if (keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _ball, _level);
+                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _ball, _level, _highScores);
             }
         }
 

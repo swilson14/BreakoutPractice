@@ -24,7 +24,7 @@ namespace BreakoutPractice.Src.States
         private int _score;
         private int _level;
         private LevelMaker _levelMaker;
-        private HighScore[] _highScores;
+        private HighScoreList _highScores;
 
         public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, Dictionary<string,SpriteFont> fonts, LevelMaker levelMaker, Paddle paddle, int health, int score) : base(stateMachine)
         {
@@ -44,7 +44,7 @@ namespace BreakoutPractice.Src.States
         public override void Enter(params object[] args)
         {
             _bricks = _levelMaker.CreateMap(1);
-            _highScores = (HighScore[])args[0];
+            _highScores = (HighScoreList)args[0];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -66,9 +66,13 @@ namespace BreakoutPractice.Src.States
             {
                 _confirmSound.Play();
 
-                if (highlighted == 1) 
+                if (highlighted == 1)
                 {
-                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level);
+                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
+                }
+                else 
+                {
+                    _stateMachine.ChangeState("high_scores", _highScores);
                 }
             }
 

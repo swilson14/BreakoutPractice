@@ -16,7 +16,7 @@ namespace BreakoutPractice.Src.States
         private int _score;
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
-        private HighScore[] _highScores;
+        private HighScoreList _highScores;
         private SoundEffect _highScoreSound;
 
         public GameOverState(StateMachine stateMachine, Dictionary<string, SpriteFont> fonts, Dictionary<string, SoundEffect> soundEffects) : base(stateMachine)
@@ -29,7 +29,7 @@ namespace BreakoutPractice.Src.States
         public override void Enter(params object[] args)
         {
             _score = (int)args[0];
-            _highScores = (HighScore[])args[1];
+            _highScores = (HighScoreList)args[1];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -38,11 +38,11 @@ namespace BreakoutPractice.Src.States
             {
                 bool isHighScore = false;
 
-                int scoreIndex = 11;
+                int scoreIndex = 10;
 
                 for (int i = 9; i >= 0; i--)
                 {
-                    int currentHighScore = _highScores[i].Score;
+                    int currentHighScore = _highScores.HighScores[i].Score;
                     if (_score > currentHighScore)
                     {
                         scoreIndex = i;

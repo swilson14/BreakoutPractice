@@ -83,7 +83,7 @@ namespace BreakoutPractice
         // Game stats
         private int _score;
         private int _health;
-        private HighScore[] _highScores;
+        private HighScoreList _highScores;
 
         public Game1()
         {
@@ -144,14 +144,14 @@ namespace BreakoutPractice
 
             _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect);
 
-            _health = 3;
-            _score = 0;
+            _health = 1;
+            _score = 1100;
 
             _hud = new Hud(_health, _score, _heartSprites, _smallFont);
 
             _stateMachine = new StateMachine();
-
-            _highScores = new HighScore[10];
+            _highScores = new HighScoreList();
+            _highScores.HighScores = new HighScore[10];
             LoadHighScores();
 
             _stateMachine.States = new Dictionary<string, State>
@@ -159,8 +159,10 @@ namespace BreakoutPractice
                 { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
                 { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud)},
                 { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud, fonts)},
-                { "GameOver", new GameOverState(_stateMachine, fonts, soundEffects)},
-                { "victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) }
+                { "game_over", new GameOverState(_stateMachine, fonts, soundEffects)},
+                { "victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) },
+                { "high_scores", new HighScoreState(_stateMachine, fonts, soundEffects) },
+                { "enter_high_score", new EnterHighScoreState(_stateMachine, fonts, soundEffects)}
             };
 
             _stateMachine.ChangeState("start", _highScores);
@@ -423,17 +425,17 @@ namespace BreakoutPractice
         {
             string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string gameFolder = Path.Combine(dataPath, "breakout");
-            string dataFile = Path.Combine(dataPath, "breakout.dat");
+            string dataFile = Path.Combine(gameFolder, "breakout.dat");
             Directory.CreateDirectory(gameFolder);
 
             if (!File.Exists(dataFile))
             {
                 string scoreText = "";
 
-                for (int i = 0; i < 10; i++) 
+                for (int i = 10; i >= 1; i--) 
                 {
                     scoreText +=  "AAA\n";
-                    scoreText += $"{i * 1000}";
+                    scoreText += $"{i * 1000}\n";
                 }
 
                 File.WriteAllText(dataFile, scoreText);
@@ -442,20 +444,20 @@ namespace BreakoutPractice
             bool name = true;
             int count = 0;
 
-            for (int i = 0; i < _highScores.Length; i++) 
+            for (int i = 0; i < _highScores.HighScores.Length; i++) 
             {
-                _highScores[i] = new HighScore();
+                _highScores.HighScores[i] = new HighScore();
             }
            
             foreach (var line in File.ReadAllLines(dataFile))
             {
                 if (name)
                 {
-                    _highScores[count].Name = line.Substring(0, 3);
+                    _highScores.HighScores[count].Name = line.Substring(0, 3);
                 }
                 else
                 {
-                    _highScores[count].Score = int.Parse(line);
+                    _highScores.HighScores[count].Score = int.Parse(line);
                     count++;
                 }
                 name = !name;
