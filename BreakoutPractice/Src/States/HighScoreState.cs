@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace BreakoutPractice.Src.States
 {
@@ -54,9 +55,41 @@ namespace BreakoutPractice.Src.States
             {
                 string name = _highScores.HighScores[i].Name;
                 string score = _highScores.HighScores[i].Score.ToString();
+                int scoreNumber = i + 1;
+                string scoreNumberText = $"{scoreNumber}.";
+                float scoreNumberWidth = _mediumFont.MeasureString(scoreNumberText).X;
+
+                spriteBatch.DrawString(
+                    _mediumFont,
+                    scoreNumberText,
+                    new Vector2(Constants.VIRTUAL_WIDTH / 4, 60 + scoreNumber + scoreNumber * 13),
+                    Color.White
+                    );
+
+                spriteBatch.DrawString(
+                    _mediumFont,
+                    name,
+                    new Vector2(Constants.VIRTUAL_WIDTH / 4 + 38, 60 + scoreNumber + scoreNumber * 13), // right aligned??
+                    Color.White
+                    );
+
+                spriteBatch.DrawString(
+                    _mediumFont,
+                    score,
+                    new Vector2(Constants.VIRTUAL_WIDTH / 2, 60 + scoreNumber + scoreNumber * 13), // right aligned??
+                    Color.White
+                    );
 
             }
 
+            string pressEscapeText = "Press Escape to return to the main menu!";
+            float pressEscapeWidth = _smallFont.MeasureString(pressEscapeText).X;
+            spriteBatch.DrawString(
+                _smallFont,
+                pressEscapeText,
+                new Vector2((Constants.VIRTUAL_WIDTH - pressEscapeWidth) / 2, Constants.VIRTUAL_HEIGHT - 18),
+                Color.White
+                );
         }
     }
 }

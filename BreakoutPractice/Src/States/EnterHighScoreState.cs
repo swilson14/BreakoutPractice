@@ -99,6 +99,7 @@ namespace BreakoutPractice.Src.States
             }
             else if (keyboard.WasKeyJustPressed(Keys.Down))
             {
+                _chars[_highlightedChar]--;
                 if (_chars[_highlightedChar] < 65)
                 {
                     _chars[_highlightedChar] = 'Z';
