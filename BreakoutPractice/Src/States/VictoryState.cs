@@ -68,7 +68,7 @@ namespace BreakoutPractice.Src.States
                 new Vector2((Constants.VIRTUAL_WIDTH - completeTextWidth) / 2, Constants.VIRTUAL_HEIGHT / 4),
                 Color.White);
 
-            string instructionsText = "Press Enter to serve!";
+            string instructionsText = "Press Enter to continue!";
             float instructionsWidth = _mediumFont.MeasureString(instructionsText).X;
 
             spriteBatch.DrawString(_mediumFont, instructionsText,

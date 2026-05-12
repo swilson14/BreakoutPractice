@@ -51,10 +51,12 @@ namespace BreakoutPractice
         private Texture2D _particle;
         private TextureAtlas _atlas;
         private TextureAtlas _heartsAtlas;
+        private TextureAtlas _arrowAtlas;
         private List<Sprite> _paddleSprites = new List<Sprite>();
         private List<Sprite> _ballSprites = new List<Sprite>();
         private List<Sprite> _brickSprites = new List<Sprite>();
         private List<Sprite> _heartSprites = new List<Sprite>();
+        private List<Sprite> _arrowSprites = new List<Sprite>();
         private ParticleEffect _particleEffect;
 
 
@@ -144,8 +146,8 @@ namespace BreakoutPractice
 
             _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect);
 
-            _health = 1;
-            _score = 1100;
+            _health = 3;
+            _score = 0;
 
             _hud = new Hud(_health, _score, _heartSprites, _smallFont);
 
@@ -162,7 +164,8 @@ namespace BreakoutPractice
                 { "game_over", new GameOverState(_stateMachine, fonts, soundEffects)},
                 { "victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) },
                 { "high_scores", new HighScoreState(_stateMachine, fonts, soundEffects) },
-                { "enter_high_score", new EnterHighScoreState(_stateMachine, fonts, soundEffects)}
+                { "enter_high_score", new EnterHighScoreState(_stateMachine, fonts, soundEffects)},
+                { "paddle_select", new PaddleSelectState(_stateMachine, soundEffects, fonts, _arrowSprites, _paddleSprites) }
             };
 
             _stateMachine.ChangeState("start", _highScores);
@@ -189,11 +192,12 @@ namespace BreakoutPractice
             // TextureAtlas
             _atlas = new TextureAtlas(_main);
             _heartsAtlas = new TextureAtlas(_hearts);
+            _arrowAtlas = new TextureAtlas(_arrows);
             PopulatePaddleSprites();
             PopulateBallSprites();
             PopulateBrickSprites();
             PopulateHeartSprites();
-
+            PopulateArrowSprites();
 
             // Audio
             // Sound Effects
@@ -213,6 +217,26 @@ namespace BreakoutPractice
 
             // Song
             _music = Content.Load<Song>("Sounds/music");
+        }
+
+        private void PopulateArrowSprites()
+        {
+            int tileWidth = 24;
+            int tileHeight = 24;
+
+            float sheetWidth = _arrowAtlas.Texture.Width / tileWidth;
+            float sheetHeight = _arrowAtlas.Texture.Height / tileHeight;
+
+            int count = 1;
+            for (int i = 0; i < sheetHeight; i++)
+            {
+                for (int j = 0; j < sheetWidth; j++)
+                {
+                    _arrowAtlas.AddRegion($"arrow-{count}", j * tileWidth, i * tileHeight, tileWidth, tileHeight);
+                    _arrowSprites.Add(_arrowAtlas.CreateSprite($"arrow-{count}"));
+                    count++;
+                }
+            }
         }
 
         private void CreateParticleEffects()

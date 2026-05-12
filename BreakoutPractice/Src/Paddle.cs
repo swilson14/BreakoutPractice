@@ -28,8 +28,9 @@ namespace BreakoutPractice.Src
         public int Width { get; set; }
         public int Skin { get; set;  }        
         public PaddleSize Size { get; set; }
+        public Sprite PaddleSprite { get; set; }
 
-        public Sprite PaddleSprite { get; set;  }
+        private List<Sprite> _paddleSprites;
 
         public Paddle(List<Sprite> paddleSprites)
         {
@@ -39,9 +40,10 @@ namespace BreakoutPractice.Src
             Height = 16;
             Skin = 1;
             Size = PaddleSize.medium;
+            _paddleSprites = paddleSprites;
             int spriteIndex = (int)Size + 4 * (Skin - 1);
             spriteIndex = spriteIndex - 1;
-            PaddleSprite = paddleSprites[spriteIndex];
+            PaddleSprite = _paddleSprites[spriteIndex];
         }
 
         public void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -68,6 +70,14 @@ namespace BreakoutPractice.Src
             {
                 X = Math.Min(Constants.VIRTUAL_WIDTH - Width, X + (float)(Velocity.X * gameTime.ElapsedGameTime.TotalSeconds));
             }
+        }
+
+        public void ChangeSkin(int skin)
+        {
+            Skin = skin;
+            int spriteIndex = (int)Size + 4 * (Skin - 1);
+            spriteIndex = spriteIndex - 1;
+            PaddleSprite = _paddleSprites[spriteIndex];
         }
 
         public void Draw(SpriteBatch spriteBatch)

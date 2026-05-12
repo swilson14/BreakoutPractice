@@ -38,12 +38,12 @@ namespace BreakoutPractice.Src.States
             _score = score;
             _level = 1;
             _levelMaker = levelMaker;
-            _bricks = _levelMaker.CreateMap(1);
+            _bricks = _levelMaker.CreateMap(_level);
         }
 
         public override void Enter(params object[] args)
         {
-            _bricks = _levelMaker.CreateMap(1);
+            _bricks = _levelMaker.CreateMap(_level);
             _highScores = (HighScoreList)args[0];
         }
 
@@ -68,7 +68,7 @@ namespace BreakoutPractice.Src.States
 
                 if (highlighted == 1)
                 {
-                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
+                    _stateMachine.ChangeState("paddle_select", _paddle, _bricks, _health, _score, _level, _highScores);
                 }
                 else 
                 {
