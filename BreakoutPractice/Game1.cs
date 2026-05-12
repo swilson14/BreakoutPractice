@@ -167,8 +167,10 @@ namespace BreakoutPractice
                 { "enter_high_score", new EnterHighScoreState(_stateMachine, fonts, soundEffects)},
                 { "paddle_select", new PaddleSelectState(_stateMachine, soundEffects, fonts, _arrowSprites, _paddleSprites) }
             };
+
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Play(_music);
+
             _stateMachine.ChangeState("start", _highScores);           
         }
 
