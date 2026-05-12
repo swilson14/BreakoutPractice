@@ -17,6 +17,7 @@ namespace BreakoutPractice.Src.States
     {
         private HighScoreList _highScores;
         private int _currentPaddle;
+        private List<Sprite> _paddleSprites;
 
         // Sound effects
         private SoundEffect _noSelectSound;
@@ -27,6 +28,10 @@ namespace BreakoutPractice.Src.States
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
         private SpriteFont _smallFont;
+
+        // Graphics
+        private Sprite _leftArrowSprite;
+        private Sprite _rightArrowSprite;
 
         // Just passing through.
         private Paddle _paddle;
@@ -41,7 +46,7 @@ namespace BreakoutPractice.Src.States
             _currentPaddle = 1;
 
             // Sound Effects
-            _noSelectSound = soundEffects["no-select"];
+            _noSelectSound = soundEffects["no_select"];
             _selectSound = soundEffects["select"];
             _confirmSound = soundEffects["confirm"];
 
@@ -49,6 +54,11 @@ namespace BreakoutPractice.Src.States
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
             _smallFont = fonts["small"];
+
+            // Graphics
+            _leftArrowSprite = arrowSprites[0];
+            _rightArrowSprite = arrowSprites[1];
+            _paddleSprites = paddleSprites;
         }
 
         public override void Enter(params object[] args)
@@ -109,15 +119,34 @@ namespace BreakoutPractice.Src.States
             string pressEnterText = "(Press Enter to continue!)";
             float pressEnterWidth = _smallFont.MeasureString(pressEnterText).X;
 
-            spriteBatch.DrawString(_mediumFont, pressEnterText,
+            spriteBatch.DrawString(_smallFont, pressEnterText,
                 new Vector2((Constants.VIRTUAL_WIDTH - pressEnterWidth) / 2, Constants.VIRTUAL_HEIGHT / 3),
                 Color.White);
 
             // Draw left arrow
+            Color leftColor = Color.White;
+            if (_currentPaddle == 1)
+            {
+                leftColor = new Color(40f / 255f, 40f / 255f, 40f / 255f, 128f / 255f);
+            }
+            _leftArrowSprite.Color = leftColor;
+            _leftArrowSprite.Draw(spriteBatch, new Vector2(Constants.VIRTUAL_WIDTH / 4 - 24, Constants.VIRTUAL_HEIGHT - Constants.VIRTUAL_HEIGHT / 3));
+
 
             // Draw right arrow
+            Color rightColor = Color.White;
+            if (_currentPaddle == 4)
+            {
+                rightColor = new Color(40f / 255f, 40f / 255f, 40f / 255f, 128f / 255f);
+            }
+            _rightArrowSprite.Color = rightColor;
+            _rightArrowSprite.Draw(spriteBatch, new Vector2(Constants.VIRTUAL_WIDTH - Constants.VIRTUAL_WIDTH / 4, Constants.VIRTUAL_HEIGHT - Constants.VIRTUAL_HEIGHT / 3));
 
             // Draw paddle
+            int spriteIndex = (int)2 + 4 * (_currentPaddle - 1);
+            spriteIndex = spriteIndex - 1;
+            Sprite paddleSprite = _paddleSprites[spriteIndex];
+            paddleSprite.Draw(spriteBatch, new Vector2(Constants.VIRTUAL_WIDTH / 2 - 32, Constants.VIRTUAL_HEIGHT - Constants.VIRTUAL_HEIGHT / 3));
 
         }
     }
