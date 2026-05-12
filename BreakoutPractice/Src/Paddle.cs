@@ -50,15 +50,15 @@ namespace BreakoutPractice.Src
         {
             if (keyboard.IsKeyDown(Keys.Left) || keyboard.IsKeyDown(Keys.A))
             {
-                Velocity = new Vector2(-Constants.PADDLE_SPEED,0);
+                Velocity = new Vector2(-Constants.PADDLE_SPEED, 0);
             }
             else if (keyboard.IsKeyDown(Keys.Right) || keyboard.IsKeyDown(Keys.D))
             {
-                Velocity = new Vector2(Constants.PADDLE_SPEED,0);
+                Velocity = new Vector2(Constants.PADDLE_SPEED, 0);
             }
-            else 
-            { 
-                Velocity = Vector2.Zero; 
+            else
+            {
+                Velocity = Vector2.Zero;
             }
 
             // Prevent paddle from moving off screen
@@ -66,10 +66,21 @@ namespace BreakoutPractice.Src
             {
                 X = Math.Max(0, X + (float)(Velocity.X * gameTime.ElapsedGameTime.TotalSeconds));
             }
-            else 
+            else
             {
                 X = Math.Min(Constants.VIRTUAL_WIDTH - Width, X + (float)(Velocity.X * gameTime.ElapsedGameTime.TotalSeconds));
             }
+
+            // Move along Y axis.
+            if (Velocity.Y < 0)
+            {
+                Y = Math.Max(Constants.VIRTUAL_HEIGHT - 75, Y + (float)(Velocity.Y * gameTime.ElapsedGameTime.TotalSeconds));
+            }
+            else
+            {
+                Y = Math.Min(Constants.VIRTUAL_HEIGHT - Height, Y + (float)(Velocity.Y * gameTime.ElapsedGameTime.TotalSeconds));
+            }
+
         }
 
         public void ChangeSkin(int skin)
