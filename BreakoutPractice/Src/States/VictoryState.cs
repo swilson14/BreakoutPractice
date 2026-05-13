@@ -18,6 +18,7 @@ namespace BreakoutPractice.Src.States
         private int _score;
         private Paddle _paddle;
         private int _health;
+        private List<Ball> _balls;
         private Ball _ball;
         private Hud _hud;
         private LevelMaker _levelMaker;
@@ -39,8 +40,12 @@ namespace BreakoutPractice.Src.States
             _paddle = (Paddle)args[1];
             _health = (int)args[2];
             _score = (int)args[3];
-            _ball = (Ball)args[4];
+            _balls = (List<Ball>)args[4];
             _highScores = (HighScoreList)args[5];
+            
+            // Remove all balls other than the first
+            _balls.RemoveRange(1,_balls.Count-1);
+            _ball = _balls[0];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)

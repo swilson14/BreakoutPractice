@@ -63,6 +63,9 @@ namespace BreakoutPractice.Src.States
             int ballDy = _random.Next(-60, -51);
 
             _balls[0].Velocity = new Vector2(ballDx, ballDy);
+
+            // Make sure power up is null
+            _extraBallPowerup = null;
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -164,7 +167,7 @@ namespace BreakoutPractice.Src.States
                         if (CheckVictory())
                         {
                             _victorySound.Play();
-                            _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, ball, _highScores);
+                            _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _balls, _highScores);
                         }
 
                         int ballRadius = (int)(ball.Width / 2f);
@@ -208,7 +211,7 @@ namespace BreakoutPractice.Src.States
                         {
                             if (_random.Next(4) > 2)
                             {
-                                _extraBallPowerup = new ExtraBallPowerup(_extraBallSprite, new Vector2(brick.X, brick.Y));
+                                _extraBallPowerup = new ExtraBallPowerup(_extraBallSprite, new Vector2(brick.X, brick.Y+_extraBallSprite.Height));
                             }
                         }
                         break;

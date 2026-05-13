@@ -49,9 +49,9 @@ namespace BreakoutPractice.Src.States
             _level = (int)args[4];
             _highScores = (HighScoreList)args[5];
 
-
-
             // Should be zero balls at this point
+            _balls.Clear();
+
             int skin = _random.Next(7);
             _balls.Add(new Ball(skin, _wallHit, _ballSprites, _random));
         }
