@@ -34,6 +34,7 @@ namespace BreakoutPractice.Src.States
         private Sprite _extraBallSprite;
         private ExtraBallPowerup _extraBallPowerup;
         private List<Sprite> _ballSprites;
+        private int _scoreCheck;
 
         public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites) : base(stateMachine)
         {
@@ -47,6 +48,7 @@ namespace BreakoutPractice.Src.States
             _random = random;
             _extraBallSprite = extraBallSprite;
             _ballSprites = ballSprites;
+            _scoreCheck = 1;
         }
 
         public override void Enter(params object[] args)
@@ -162,6 +164,17 @@ namespace BreakoutPractice.Src.States
                     {
                         _score += (brick.Tier * 200 + brick.Color * 25);
 
+                        if (_score > 5000 * _scoreCheck)
+                        {
+                            // increase paddle size
+                            if ((int)_paddle.Size < 4)
+                            {
+                                int newPaddleSize = (int)_paddle.Size + 1;
+                                _paddle.ChangeSize(newPaddleSize);
+                            }
+                            _scoreCheck++;                 
+                        }
+
                         brick.BrickHit();
 
                         if (CheckVictory())
@@ -229,6 +242,12 @@ namespace BreakoutPractice.Src.States
                 {
                     _health -= 1;
                     _hurtSound.Play();
+
+                    if ((int)_paddle.Size > 1)
+                    {
+                        int newPaddleSize = (int)_paddle.Size - 1;
+                        _paddle.ChangeSize(newPaddleSize);
+                    }
 
                     if (_health <= 0)
                     {

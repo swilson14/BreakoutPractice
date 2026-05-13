@@ -80,6 +80,16 @@ namespace BreakoutPractice.Src.Entities
             PaddleSprite = _paddleSprites[spriteIndex];
         }
 
+        public void ChangeSize(int size)
+        {
+            Size = (PaddleSize)size;
+            int spriteIndex = (int)Size + 4 * (Skin - 1);
+            spriteIndex = spriteIndex - 1;
+            PaddleSprite = _paddleSprites[spriteIndex];
+            Width = (int)PaddleSprite.Width;
+            Height = (int)PaddleSprite.Height;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             PaddleSprite.Draw(spriteBatch, new Vector2(X, Y));
