@@ -15,7 +15,7 @@ namespace BreakoutPractice.Src.Entities
         public Vector2 Velocity { get; set; }
         public Sprite Sprite { get; set; }
 
-        private float _speed = 10f;
+        private float _speed = 15f;
 
         public ExtraBallPowerup(Sprite sprite, Vector2 position)
         {

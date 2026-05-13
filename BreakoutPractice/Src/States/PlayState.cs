@@ -46,6 +46,7 @@ namespace BreakoutPractice.Src.States
             _hud = hud;
             _random = random;
             _extraBallSprite = extraBallSprite;
+            _ballSprites = ballSprites;
         }
 
         public override void Enter(params object[] args)
@@ -106,14 +107,23 @@ namespace BreakoutPractice.Src.States
                 {
                     int skin1 = _random.Next(7);
                     int skin2 = _random.Next(7);
-                                     
-                    _balls.Add(new Ball(skin1, _wallHit, _ballSprites));
-                    _balls.Add(new Ball(skin2, _wallHit, _ballSprites));
+
+                    Ball ball1 = new Ball(skin1, _wallHit, _ballSprites, _random);
+                    ball1.extraBall(_paddle);
+
+
+                    Ball ball2 = new Ball(skin2, _wallHit, _ballSprites, _random);
+                    ball2.extraBall(_paddle);
+
+                    _balls.Add(ball1);
+                    _balls.Add(ball2);
+                    _extraBallPowerup = null;
                 }
             }
 
-            foreach (var ball in _balls)
+            for (int i = 0; i < _balls.Count; i++)
             {
+                Ball ball = _balls[i];
 
                 if (ball.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
                 {
@@ -204,7 +214,6 @@ namespace BreakoutPractice.Src.States
                         break;
                     }
                 }
-
 
                 if (ball.Y >= Constants.VIRTUAL_HEIGHT)
                 {

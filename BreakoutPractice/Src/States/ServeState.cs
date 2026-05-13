@@ -37,6 +37,7 @@ namespace BreakoutPractice.Src.States
             _hud = hud;
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
+            _balls = new List<Ball>();
         }
 
         public override void Enter(params object[] args)
@@ -48,9 +49,11 @@ namespace BreakoutPractice.Src.States
             _level = (int)args[4];
             _highScores = (HighScoreList)args[5];
 
+
+
             // Should be zero balls at this point
             int skin = _random.Next(7);
-            _balls.Add(new Ball(skin, _wallHit, _ballSprites));
+            _balls.Add(new Ball(skin, _wallHit, _ballSprites, _random));
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)

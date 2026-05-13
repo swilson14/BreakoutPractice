@@ -29,9 +29,10 @@ namespace BreakoutPractice.Src.Entities
 
         private Sprite _ballSprite;
 
-        
+        private Random _random;
 
-        public Ball(int skin, SoundEffect wallHit, List<Sprite> ballSprites)
+      
+        public Ball(int skin, SoundEffect wallHit, List<Sprite> ballSprites, Random random)
         {
             Width = 8;
             Height = 8;
@@ -40,6 +41,7 @@ namespace BreakoutPractice.Src.Entities
             _wallHit = wallHit;
             _ballSprite = ballSprites[Skin];
             Active = true;
+            _random = random;
         }
 
         public bool Collides(Rectangle target)
@@ -63,6 +65,17 @@ namespace BreakoutPractice.Src.Entities
             Y = Constants.VIRTUAL_HEIGHT / 2 - 2;
             Velocity = Vector2.Zero;
         }
+
+        public void extraBall(Paddle paddle)
+        {
+            X = paddle.X;
+            Y = paddle.Y;
+
+            int ballDx = _random.Next(-200, 201);
+            int ballDy = _random.Next(-60, -51);
+            Velocity = new Vector2(ballDx, ballDy);
+        }
+
 
         public void Update(GameTime gameTime)
         {
