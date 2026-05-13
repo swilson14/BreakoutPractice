@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using BreakoutPractice.Src.Entities;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Particles;
 using System;
 using System.Collections.Generic;

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BreakoutPractice.Src
+namespace BreakoutPractice.Src.Entities
 {
     public enum PaddleSize
     {

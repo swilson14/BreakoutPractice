@@ -1,5 +1,6 @@
 ﻿using BreakoutPractice.Input;
 using BreakoutPractice.Src;
+using BreakoutPractice.Src.Entities;
 using BreakoutPractice.Src.Graphics;
 using BreakoutPractice.Src.States;
 using Microsoft.Xna.Framework;
@@ -37,7 +38,6 @@ namespace BreakoutPractice
         private LevelMaker _levelMaker;
         private Random _random;
 
-
         // Fonts
         private SpriteFont _smallFont;
         private SpriteFont _mediumFont;
@@ -58,7 +58,7 @@ namespace BreakoutPractice
         private List<Sprite> _heartSprites = new List<Sprite>();
         private List<Sprite> _arrowSprites = new List<Sprite>();
         private ParticleEffect _particleEffect;
-
+        private Sprite _extraBallSprite;
 
         // Audio
         private SoundEffect _paddleHitSound;
@@ -78,7 +78,6 @@ namespace BreakoutPractice
 
         // Game Objects
         private Paddle _paddle;
-        private Ball _ball;
         private Brick _brickTemplate;
         private Hud _hud;
 
@@ -138,10 +137,6 @@ namespace BreakoutPractice
                 { "large", _largeFont },
             };
 
-            int ballSkin = _random.Next(7);
-
-            _ball = new Ball(ballSkin, _wallHitSound, _ballSprites);
-
             _brickTemplate = new Brick(soundEffects, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR, _particleEffect);
 
             _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect);
@@ -159,7 +154,7 @@ namespace BreakoutPractice
             _stateMachine.States = new Dictionary<string, State>
             {
                 { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
-                { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud)},
+                { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud, _extraBallSprite)},
                 { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud, fonts)},
                 { "game_over", new GameOverState(_stateMachine, fonts, soundEffects)},
                 { "victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) },
@@ -201,6 +196,7 @@ namespace BreakoutPractice
             PopulateBrickSprites();
             PopulateHeartSprites();
             PopulateArrowSprites();
+            PopulatePowerupSprites();
 
             // Audio
             // Sound Effects
@@ -220,6 +216,12 @@ namespace BreakoutPractice
 
             // Song
             _music = Content.Load<Song>("Sounds/music");
+        }
+
+        private void PopulatePowerupSprites()
+        {
+            _atlas.AddRegion("extraBalls",128,192,16,16);
+            _extraBallSprite = _atlas.CreateSprite("extraBalls");
         }
 
         private void PopulateArrowSprites()

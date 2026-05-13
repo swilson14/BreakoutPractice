@@ -1,4 +1,6 @@
 ﻿using BreakoutPractice.Input;
+using BreakoutPractice.Src.Entities;
+using BreakoutPractice.Src.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,11 +16,12 @@ namespace BreakoutPractice.Src.States
     public class PlayState : State
     {
         private Paddle _paddle;
-        private Ball _ball;
+        private List<Ball> _balls;
         private SoundEffect _pauseSound;
         private SoundEffect _paddleHit;
         private SoundEffect _hurtSound;
         private SoundEffect _victorySound;
+        private SoundEffect _wallHit;
         private SpriteFont _largeFont;
         private bool _paused;
         private List<Brick> _bricks;
@@ -28,16 +31,21 @@ namespace BreakoutPractice.Src.States
         private Hud _hud;
         private Random _random;
         private HighScoreList _highScores;
+        private Sprite _extraBallSprite;
+        private ExtraBallPowerup _extraBallPowerup;
+        private List<Sprite> _ballSprites;
 
-        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud) : base(stateMachine)
+        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites) : base(stateMachine)
         {
             _pauseSound = gameSounds["pause"];
             _largeFont = largeFont;
             _paddleHit = gameSounds["paddle_hit"];
             _hurtSound = gameSounds["hurt"];
             _victorySound = gameSounds["victory"];
+            _wallHit = gameSounds["wall_hit"];
             _hud = hud;
             _random = random;
+            _extraBallSprite = extraBallSprite;
         }
 
         public override void Enter(params object[] args)
@@ -46,13 +54,14 @@ namespace BreakoutPractice.Src.States
             _bricks = (List<Brick>)args[1];
             _health = (int)args[2];
             _score = (int)args[3];
-            _ball = (Ball)args[4];
+            _balls = (List<Ball>)args[4];
             _level = (int)args[5];
             _highScores = (HighScoreList)args[6];
 
             int ballDx = _random.Next(-200, 201);
             int ballDy = _random.Next(-60, -51);
-            _ball.Velocity = new Vector2(ballDx, ballDy);
+
+            _balls[0].Velocity = new Vector2(ballDx, ballDy);
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -64,7 +73,7 @@ namespace BreakoutPractice.Src.States
                     _paused = false;
                     _pauseSound.Play();
                 }
-                else 
+                else
                 {
                     return;
                 }
@@ -77,105 +86,146 @@ namespace BreakoutPractice.Src.States
             }
 
             _paddle.Update(gameTime, keyboard);
-            _ball.Update(gameTime);
-            _hud.Update(_health, _score);
 
-            if (_ball.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
+            foreach (var ball in _balls)
             {
-                _ball.Y = _paddle.Y - 8;
-                _ball.Velocity = new Vector2(_ball.Velocity.X, -_ball.Velocity.Y);
-
-                bool paddleMovingLeft = _paddle.Velocity.X < 0;
-                bool paddleMovingRight = _paddle.Velocity.X > 0;
-                float paddleCenter = _paddle.X + _paddle.Width / 2;
-
-                int startingBounceDx = 50;
-                int bounceAngleMultiplier = 8;
-
-                // If ball hits the paddle on left side while it's moving left.
-                if (_ball.X < paddleCenter && paddleMovingLeft)
-                {
-                    float ballOffset = paddleCenter - _ball.X;
-                    _ball.Velocity = new Vector2(-startingBounceDx - bounceAngleMultiplier * ballOffset, _ball.Velocity.Y);
-                }
-                // If ball hits the paddle on right side while it's moving right.
-                else if (_ball.X > paddleCenter && paddleMovingRight)
-                {
-                    float ballOffset = _ball.X - paddleCenter;
-                    _ball.Velocity = new Vector2(startingBounceDx + bounceAngleMultiplier * ballOffset,_ball.Velocity.Y);
-                }
-
-                _paddleHit.Play();
+                ball.Update(gameTime);
             }
 
-            foreach (Brick brick in _bricks)
+            _hud.Update(_health, _score);
+
+            if (_extraBallPowerup != null)
             {
-                if (brick.Active && _ball.Collides(new Rectangle((int)brick.X, (int)brick.Y, brick.Width, brick.Height)))
+                _extraBallPowerup.Update(gameTime);
+                if (_extraBallPowerup.Position.Y > Constants.VIRTUAL_HEIGHT + _extraBallPowerup.Sprite.Height)
                 {
+                    _extraBallPowerup = null;
+                }
 
-                    _score += (brick.Tier * 200 + brick.Color * 25);
+                if (_extraBallPowerup.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
+                {
+                    int skin1 = _random.Next(7);
+                    int skin2 = _random.Next(7);
+                                     
+                    _balls.Add(new Ball(skin1, _wallHit, _ballSprites));
+                    _balls.Add(new Ball(skin2, _wallHit, _ballSprites));
+                }
+            }
 
-                    brick.BrickHit();
+            foreach (var ball in _balls)
+            {
 
-                    if (CheckVictory())
+                if (ball.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
+                {
+                    ball.Y = _paddle.Y - 8;
+                    ball.Velocity = new Vector2(ball.Velocity.X, -ball.Velocity.Y);
+
+                    bool paddleMovingLeft = _paddle.Velocity.X < 0;
+                    bool paddleMovingRight = _paddle.Velocity.X > 0;
+                    float paddleCenter = _paddle.X + _paddle.Width / 2;
+
+                    int startingBounceDx = 50;
+                    int bounceAngleMultiplier = 8;
+
+                    // If ball hits the paddle on left side while it's moving left.
+                    if (ball.X < paddleCenter && paddleMovingLeft)
                     {
-                        _victorySound.Play();
-                        _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _ball, _highScores);
+                        float ballOffset = paddleCenter - ball.X;
+                        ball.Velocity = new Vector2(-startingBounceDx - bounceAngleMultiplier * ballOffset, ball.Velocity.Y);
+                    }
+                    // If ball hits the paddle on right side while it's moving right.
+                    else if (ball.X > paddleCenter && paddleMovingRight)
+                    {
+                        float ballOffset = ball.X - paddleCenter;
+                        ball.Velocity = new Vector2(startingBounceDx + bounceAngleMultiplier * ballOffset, ball.Velocity.Y);
                     }
 
+                    _paddleHit.Play();
+                }
 
-
-                    int ballRadius = (int)(_ball.Width / 2f);
-                    float brickWidth = brick.Width;
-                    float brickHeight = brick.Height;
-                    Vector2 brickCenter = new Vector2(brick.X + brickWidth / 2, brick.Y + brickHeight / 2);
-                    Vector2 ballCenter = new Vector2(_ball.X + ballRadius, _ball.Y + ballRadius);
-                    Vector2 collisionOffset = brickCenter - ballCenter;
-
-                    // Depth
-                    Vector2 collisionDepth = new Vector2(brickWidth / 2 + ballRadius - Math.Abs(collisionOffset.X),
-                                                         brickHeight / 2 + ballRadius - Math.Abs(collisionOffset.Y));
-                    if (collisionDepth.X < collisionDepth.Y)
+                foreach (Brick brick in _bricks)
+                {
+                    if (brick.Active && ball.Collides(new Rectangle((int)brick.X, (int)brick.Y, brick.Width, brick.Height)))
                     {
-                        _ball.Velocity = new Vector2(-_ball.Velocity.X, _ball.Velocity.Y);
-                        if (collisionOffset.X > 0)
+                        _score += (brick.Tier * 200 + brick.Color * 25);
+
+                        brick.BrickHit();
+
+                        if (CheckVictory())
                         {
-                            _ball.X -= collisionDepth.X;
+                            _victorySound.Play();
+                            _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, ball, _highScores);
                         }
-                        else 
+
+                        int ballRadius = (int)(ball.Width / 2f);
+                        float brickWidth = brick.Width;
+                        float brickHeight = brick.Height;
+                        Vector2 brickCenter = new Vector2(brick.X + brickWidth / 2, brick.Y + brickHeight / 2);
+                        Vector2 ballCenter = new Vector2(ball.X + ballRadius, ball.Y + ballRadius);
+                        Vector2 collisionOffset = brickCenter - ballCenter;
+
+                        // Depth
+                        Vector2 collisionDepth = new Vector2(brickWidth / 2 + ballRadius - Math.Abs(collisionOffset.X),
+                                                             brickHeight / 2 + ballRadius - Math.Abs(collisionOffset.Y));
+                        if (collisionDepth.X < collisionDepth.Y)
                         {
-                            _ball.X += collisionDepth.X;
-                        }
-                    }
-                    else
-                    {
-                        _ball.Velocity = new Vector2(_ball.Velocity.X, -_ball.Velocity.Y);
-                        if (collisionOffset.Y > 0)
-                        {
-                            _ball.Y -= collisionDepth.Y;
+                            ball.Velocity = new Vector2(-ball.Velocity.X, ball.Velocity.Y);
+                            if (collisionOffset.X > 0)
+                            {
+                                ball.X -= collisionDepth.X;
+                            }
+                            else
+                            {
+                                ball.X += collisionDepth.X;
+                            }
                         }
                         else
                         {
-                            _ball.Y += collisionDepth.Y;
+                            ball.Velocity = new Vector2(ball.Velocity.X, -ball.Velocity.Y);
+                            if (collisionOffset.Y > 0)
+                            {
+                                ball.Y -= collisionDepth.Y;
+                            }
+                            else
+                            {
+                                ball.Y += collisionDepth.Y;
+                            }
                         }
+
+                        ball.Velocity = new Vector2(ball.Velocity.X, (float)(ball.Velocity.Y * 1.02));
+
+                        if (_extraBallPowerup == null && _balls.Count < 2)
+                        {
+                            if (_random.Next(4) > 2)
+                            {
+                                _extraBallPowerup = new ExtraBallPowerup(_extraBallSprite, new Vector2(brick.X, brick.Y));
+                            }
+                        }
+                        break;
                     }
-                    _ball.Velocity = new Vector2(_ball.Velocity.X, (float)(_ball.Velocity.Y * 1.02));
-                    break;
                 }
-            }
 
-            if (_ball.Y >= Constants.VIRTUAL_HEIGHT)
-            {
-                _health -= 1;
-                _hurtSound.Play();
 
-                if (_health <= 0)
+                if (ball.Y >= Constants.VIRTUAL_HEIGHT)
                 {
-                    _stateMachine.ChangeState("game_over",_score, _highScores);
+                    ball.Active = false;
                 }
-                else 
+
+                _balls.RemoveAll(b => b.Active == false);
+
+                if (_balls.Count == 0)
                 {
-                    _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
+                    _health -= 1;
+                    _hurtSound.Play();
+
+                    if (_health <= 0)
+                    {
+                        _stateMachine.ChangeState("game_over", _score, _highScores);
+                    }
+                    else
+                    {
+                        _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
+                    }
                 }
             }
 
@@ -202,8 +252,18 @@ namespace BreakoutPractice.Src.States
             }
 
             _paddle.Draw(spriteBatch);
-            _ball.Draw(spriteBatch);
+
+            foreach (var ball in _balls)
+            {
+                ball.Draw(spriteBatch);
+            }
+
             _hud.Draw(spriteBatch);
+
+            if (_extraBallPowerup != null)
+            {
+                _extraBallPowerup.Draw(spriteBatch);
+            }
 
             if (_paused)
             {

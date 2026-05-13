@@ -9,7 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BreakoutPractice.Src
+namespace BreakoutPractice.Src.Entities
 {
     public class Ball
     {
@@ -21,11 +21,15 @@ namespace BreakoutPractice.Src
         public float Y { get; set; }
         public Vector2 Velocity { get; set; }
 
+        public bool Active { get; set; }
+
         public int Skin { get; set; }
 
         private SoundEffect _wallHit;
 
-        private Sprite ballSprite;
+        private Sprite _ballSprite;
+
+        
 
         public Ball(int skin, SoundEffect wallHit, List<Sprite> ballSprites)
         {
@@ -34,7 +38,8 @@ namespace BreakoutPractice.Src
             Velocity = Vector2.Zero;
             Skin = skin;
             _wallHit = wallHit;
-            ballSprite = ballSprites[Skin];
+            _ballSprite = ballSprites[Skin];
+            Active = true;
         }
 
         public bool Collides(Rectangle target)
@@ -88,7 +93,7 @@ namespace BreakoutPractice.Src
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            ballSprite.Draw(spriteBatch, new Vector2(X, Y));
+            _ballSprite.Draw(spriteBatch, new Vector2(X, Y));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BreakoutPractice.Input;
+using BreakoutPractice.Src.Entities;
 using BreakoutPractice.Src.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -18,7 +19,7 @@ namespace BreakoutPractice.Src.States
         private List<Brick> _bricks;
         private int _health;
         private int _score;
-        private Ball _ball;
+        private List<Ball> _balls;
         private Random _random;
         private List<Sprite> _ballSprites;
         private SoundEffect _wallHit;
@@ -47,8 +48,9 @@ namespace BreakoutPractice.Src.States
             _level = (int)args[4];
             _highScores = (HighScoreList)args[5];
 
+            // Should be zero balls at this point
             int skin = _random.Next(7);
-            _ball = new Ball(skin, _wallHit, _ballSprites);
+            _balls.Add(new Ball(skin, _wallHit, _ballSprites));
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -56,19 +58,19 @@ namespace BreakoutPractice.Src.States
             _paddle.Update(gameTime, keyboard);
             _hud.Update(_health, _score);
             // ball follows the player
-            _ball.X = _paddle.X + (_paddle.Width / 2);
-            _ball.Y = _paddle.Y - 8;
+            _balls[0].X = _paddle.X + (_paddle.Width / 2);
+            _balls[0].Y = _paddle.Y - 8;
 
             if (keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _ball, _level, _highScores);
+                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _balls, _level, _highScores);
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             _paddle.Draw(spriteBatch);
-            _ball.Draw(spriteBatch);
+            _balls[0].Draw(spriteBatch);
 
             foreach (Brick brick in _bricks)
             {

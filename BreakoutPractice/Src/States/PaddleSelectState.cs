@@ -1,4 +1,5 @@
 ﻿using BreakoutPractice.Input;
+using BreakoutPractice.Src.Entities;
 using BreakoutPractice.Src.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
