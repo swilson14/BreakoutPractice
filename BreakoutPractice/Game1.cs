@@ -59,6 +59,7 @@ namespace BreakoutPractice
         private List<Sprite> _arrowSprites = new List<Sprite>();
         private ParticleEffect _particleEffect;
         private Sprite _extraBallSprite;
+        private Sprite _lockedBrick;
 
         // Audio
         private SoundEffect _paddleHitSound;
@@ -139,7 +140,7 @@ namespace BreakoutPractice
 
             _brickTemplate = new Brick(soundEffects, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR, _particleEffect);
 
-            _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect);
+            _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect, _lockedBrick);
 
             _health = 1;
             _score = 5000;
@@ -197,6 +198,7 @@ namespace BreakoutPractice
             PopulateHeartSprites();
             PopulateArrowSprites();
             PopulatePowerupSprites();
+
 
             // Audio
             // Sound Effects
@@ -349,7 +351,6 @@ namespace BreakoutPractice
 
             x = 0;
 
-
             for (int j = 0; j < 3; j++)
             {
                 _atlas.AddRegion($"brick-{count}", x, y, 32, 16);
@@ -357,6 +358,13 @@ namespace BreakoutPractice
                 x += 32;
                 count++;
             }
+
+            // Locked brick
+            x = 64;
+            y = 160;
+
+            _atlas.AddRegion($"brick-locked", x, y, 32, 16);
+            _lockedBrick = _atlas.CreateSprite("brick-locked");
         }
 
         private void PopulateBallSprites()

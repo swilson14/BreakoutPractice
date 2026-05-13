@@ -1,4 +1,5 @@
 ﻿using BreakoutPractice.Src.Entities;
+using BreakoutPractice.Src.Graphics;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Particles;
 using System;
@@ -31,12 +32,14 @@ namespace BreakoutPractice.Src
         private Random _random;
         private Brick _template;
         private ParticleEffect _particleEffect;
+        private Sprite _lockedBrick;
 
-        public LevelMaker(Random random, Brick template, ParticleEffect particleEffect)
+        public LevelMaker(Random random, Brick template, ParticleEffect particleEffect, Sprite lockedBrick)
         {
             _random = random;
             _template = template;
             _particleEffect = particleEffect;
+            _lockedBrick = lockedBrick;
         }
 
         public List<Brick> CreateMap(int level)
