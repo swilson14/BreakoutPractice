@@ -84,20 +84,25 @@ namespace BreakoutPractice.Src.States
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
             string titleText = "BREAKOUT";
             float titleWidth = _largeFont.MeasureString(titleText).X;
 
-            spriteBatch.DrawString(_largeFont,titleText,new Vector2((Constants.VIRTUAL_WIDTH - titleWidth) / 2 , Constants.VIRTUAL_HEIGHT / 3), Color.White);
+            spriteBatch.DrawString(_largeFont, titleText, new Vector2((viewportWidth - titleWidth) / 2, viewportHeight / 3), Color.White);
 
             string startText = "START";
             float startWidth = _mediumFont.MeasureString(startText).X;
             Color startColor = Color.White;
             if (highlighted == 1)
             {
-                startColor = new Color(103,255,255,255);
+                startColor = new Color(103, 255, 255, 255);
             }
 
-            spriteBatch.DrawString(_mediumFont, startText, new Vector2((Constants.VIRTUAL_WIDTH - startWidth) / 2, Constants.VIRTUAL_HEIGHT / 2 + 70), startColor);
+            spriteBatch.DrawString(_mediumFont, startText, new Vector2((viewportWidth - startWidth) / 2, viewportHeight / 2 + 210), startColor);
 
             string highScoreText = "HIGH SCORES";
             float highScoreWidth = _mediumFont.MeasureString(highScoreText).X;
@@ -107,7 +112,7 @@ namespace BreakoutPractice.Src.States
                 highScoreColor = new Color(103, 255, 255, 255);
             }
 
-            spriteBatch.DrawString(_mediumFont, highScoreText, new Vector2((Constants.VIRTUAL_WIDTH - highScoreWidth) / 2, Constants.VIRTUAL_HEIGHT / 2 + 90), highScoreColor);
+            spriteBatch.DrawString(_mediumFont, highScoreText, new Vector2((viewportWidth - highScoreWidth) / 2, viewportHeight / 2 + 270), highScoreColor);
         }
 
     }

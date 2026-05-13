@@ -25,5 +25,7 @@ namespace BreakoutPractice.Src.States
         public abstract void Update(GameTime gameTime, KeyboardInfo keyboard);
 
         public abstract void Draw(SpriteBatch spriteBatch);
+
+        public virtual void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight) { }
     }
 }

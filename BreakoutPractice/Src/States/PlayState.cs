@@ -295,12 +295,17 @@ namespace BreakoutPractice.Src.States
             {
                 _extraBallPowerup.Draw(spriteBatch);
             }
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
+            _hud.DrawText(spriteBatch, viewportWidth);
 
             if (_paused)
             {
                 string pauseText = "PAUSED";
                 float pauseTextWidth = _largeFont.MeasureString(pauseText).X;
-                spriteBatch.DrawString(_largeFont, pauseText, new Vector2(pauseTextWidth, Constants.VIRTUAL_HEIGHT - 16), Color.White);
+                spriteBatch.DrawString(_largeFont, pauseText, new Vector2(pauseTextWidth, viewportHeight - 16), Color.White);
             }
         }
     }

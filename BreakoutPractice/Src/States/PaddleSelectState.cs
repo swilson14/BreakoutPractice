@@ -110,20 +110,6 @@ namespace BreakoutPractice.Src.States
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            string selectPaddleText = "Select your paddle with left and right!";
-            float selectPaddleWidth = _mediumFont.MeasureString(selectPaddleText).X;
-
-            spriteBatch.DrawString(_mediumFont, selectPaddleText,
-                new Vector2((Constants.VIRTUAL_WIDTH - selectPaddleWidth) / 2, Constants.VIRTUAL_HEIGHT / 4),
-                Color.White);
-
-            string pressEnterText = "(Press Enter to continue!)";
-            float pressEnterWidth = _smallFont.MeasureString(pressEnterText).X;
-
-            spriteBatch.DrawString(_smallFont, pressEnterText,
-                new Vector2((Constants.VIRTUAL_WIDTH - pressEnterWidth) / 2, Constants.VIRTUAL_HEIGHT / 3),
-                Color.White);
-
             // Draw left arrow
             Color leftColor = Color.White;
             if (_currentPaddle == 1)
@@ -150,5 +136,24 @@ namespace BreakoutPractice.Src.States
             paddleSprite.Draw(spriteBatch, new Vector2(Constants.VIRTUAL_WIDTH / 2 - 32, Constants.VIRTUAL_HEIGHT - Constants.VIRTUAL_HEIGHT / 3));
 
         }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
+            string selectPaddleText = "Select your paddle with left and right!";
+            float selectPaddleWidth = _mediumFont.MeasureString(selectPaddleText).X;
+
+            spriteBatch.DrawString(_mediumFont, selectPaddleText,
+                new Vector2((viewportWidth - selectPaddleWidth) / 2, viewportHeight / 4),
+                Color.White);
+
+            string pressEnterText = "(Press Enter to continue!)";
+            float pressEnterWidth = _smallFont.MeasureString(pressEnterText).X;
+
+            spriteBatch.DrawString(_smallFont, pressEnterText,
+                new Vector2((viewportWidth - pressEnterWidth) / 2, viewportHeight / 3),
+                Color.White);
+        }
+
+
     }
 }

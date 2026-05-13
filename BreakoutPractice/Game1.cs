@@ -435,18 +435,21 @@ namespace BreakoutPractice
 
             // Apply the transformation to the sprite batch
             _spriteBatch.Begin(transformMatrix: transformMatrix, samplerState: SamplerState.PointClamp);
-            // Draw here.
+
+            // Draw Images.
             _spriteBatch.Draw(_background, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero,
                 new Vector2(Constants.VIRTUAL_WIDTH / (backgroundWidth - 1.0f), Constants.VIRTUAL_HEIGHT / (backgroundHeight - 1.0f)), // scale
                 SpriteEffects.None, 0.0f);
 
             _spriteBatch.Draw(_particleEffect);
-
-            // Draw FPS
-            _spriteBatch.DrawString(_smallFont, fps, new Vector2(5), Color.White);
             _stateMachine.Draw(_spriteBatch);
             _spriteBatch.End();
 
+            // Draw Text
+            _spriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+            _spriteBatch.DrawString(_smallFont, fps, new Vector2(15), Color.White);
+            _stateMachine.DrawText(_spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
 

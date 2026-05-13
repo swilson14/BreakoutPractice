@@ -81,21 +81,25 @@ namespace BreakoutPractice.Src.States
             }
 
             _hud.Draw(spriteBatch);
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
+            _hud.DrawText(spriteBatch, viewportWidth);
 
             string completeText = $"Level {_level}";
             float completeTextWidth = _largeFont.MeasureString(completeText).X;
 
             spriteBatch.DrawString(_largeFont, completeText,
-                new Vector2((Constants.VIRTUAL_WIDTH - completeTextWidth) / 2, Constants.VIRTUAL_HEIGHT / 4),
+                new Vector2((viewportWidth - completeTextWidth) / 2, viewportHeight / 4),
                 Color.White);
 
             string instructionsText = "Press Enter to serve!";
             float instructionsWidth = _mediumFont.MeasureString(instructionsText).X;
 
             spriteBatch.DrawString(_mediumFont, instructionsText,
-                new Vector2((Constants.VIRTUAL_WIDTH - instructionsWidth) / 2, Constants.VIRTUAL_HEIGHT / 2),
+                new Vector2((viewportWidth - instructionsWidth) / 2, viewportHeight / 2),
                 Color.White);
-
         }
     }
 }

@@ -32,5 +32,11 @@ namespace BreakoutPractice.Src
         {
             CurrentState.Draw(spriteBatch);
         }
+
+        public void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
+            CurrentState.DrawText(spriteBatch, viewportWidth, viewportHeight);
+        }
+
     }
 }
