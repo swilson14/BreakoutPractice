@@ -139,7 +139,7 @@ namespace BreakoutPractice
                 { "large", _largeFont },
             };
 
-            _brickTemplate = new Brick(soundEffects, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR, _particleEffect);
+            _brickTemplate = new Brick(soundEffects, 0, 0, _brickSprites, Constants.DEFAULT_BRICK_TIER, Constants.DEFAULT_BRICK_COLOR, _particleEffect, _lockedBrickSprite);
 
             _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect, _lockedBrickSprite);
 
