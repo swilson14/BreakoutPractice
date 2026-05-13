@@ -40,11 +40,13 @@ namespace BreakoutPractice.Src.States
         private int _health;
         private int _score;
         private int _level;
+        private int _recoverPoints;
 
         public PaddleSelectState(StateMachine stateMachine, Dictionary<string,SoundEffect> soundEffects, Dictionary<string, SpriteFont> fonts,
             List<Sprite> arrowSprites, List<Sprite> paddleSprites) : base(stateMachine)
         {
             _currentPaddle = 1;
+            _recoverPoints = 5000;
 
             // Sound Effects
             _noSelectSound = soundEffects["no_select"];
@@ -103,7 +105,7 @@ namespace BreakoutPractice.Src.States
             {
                 _confirmSound.Play();
                 _paddle.ChangeSkin(_currentPaddle);
-                _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
+                _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores, _recoverPoints);
             }
 
         }

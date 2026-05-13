@@ -22,6 +22,7 @@ namespace BreakoutPractice.Src.States
         private SoundEffect _hurtSound;
         private SoundEffect _victorySound;
         private SoundEffect _wallHit;
+        private SoundEffect _recoverSound;
         private SpriteFont _largeFont;
         private bool _paused;
         private List<Brick> _bricks;
@@ -35,6 +36,7 @@ namespace BreakoutPractice.Src.States
         private ExtraBallPowerup _extraBallPowerup;
         private List<Sprite> _ballSprites;
         private int _scoreCheck;
+        private int _recoverPoints;
 
         public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites) : base(stateMachine)
         {
@@ -44,11 +46,13 @@ namespace BreakoutPractice.Src.States
             _hurtSound = gameSounds["hurt"];
             _victorySound = gameSounds["victory"];
             _wallHit = gameSounds["wall_hit"];
+            _recoverSound = gameSounds["recover"];
             _hud = hud;
             _random = random;
             _extraBallSprite = extraBallSprite;
             _ballSprites = ballSprites;
             _scoreCheck = 1;
+
         }
 
         public override void Enter(params object[] args)
@@ -60,6 +64,7 @@ namespace BreakoutPractice.Src.States
             _balls = (List<Ball>)args[4];
             _level = (int)args[5];
             _highScores = (HighScoreList)args[6];
+            _recoverPoints = (int)args[7];
 
             int ballDx = _random.Next(-200, 201);
             int ballDy = _random.Next(-60, -51);
@@ -177,6 +182,13 @@ namespace BreakoutPractice.Src.States
 
                         brick.BrickHit();
 
+                        if (_score > _recoverPoints)
+                        {
+                            _health = Math.Min(3, _health + 1);
+                            _recoverPoints = Math.Min(100000,_recoverPoints*2);
+                            _recoverSound.Play();
+                        }
+
                         if (CheckVictory())
                         {
                             _victorySound.Play();
@@ -255,7 +267,7 @@ namespace BreakoutPractice.Src.States
                     }
                     else
                     {
-                        _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores);
+                        _stateMachine.ChangeState("serve", _paddle, _bricks, _health, _score, _level, _highScores, _recoverPoints);
                     }
                 }
             }
