@@ -135,12 +135,12 @@ namespace BreakoutPractice.Src.States
             }
 
             spriteBatch.DrawString(_largeFont, _chars[0].ToString(),
-                new Vector2(viewportWidth / 2 - 28, viewportHeight / 2),
+                new Vector2(viewportWidth / 2 - 100, viewportHeight / 2),
                 char1Color
                 );
 
             spriteBatch.DrawString(_largeFont, _chars[1].ToString(),
-                new Vector2(viewportWidth / 2 - 6, viewportHeight / 2),
+                new Vector2(viewportWidth / 2 - 40, viewportHeight / 2),
                 char2Color
                 );
 
@@ -153,7 +153,7 @@ namespace BreakoutPractice.Src.States
             float pressEnterWidth = _smallFont.MeasureString(pressEnterText).X;
 
             spriteBatch.DrawString(_smallFont, pressEnterText,
-                new Vector2(viewportWidth - pressEnterWidth / 2, viewportHeight - 18),
+                new Vector2((viewportWidth - pressEnterWidth) / 2, viewportHeight - 54),
                 Color.White);
         }
     }
