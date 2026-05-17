@@ -131,7 +131,7 @@ namespace BreakoutPractice.Src
                         tier = solidTier;
                     }
 
-                    Brick brick = new Brick(_template.SoundEffects, x, y, _template.BrickSprites, tier, color, _particleEffect);
+                    Brick brick = new Brick(_template.SoundEffects, x, y, _template.BrickSprites, tier, color, _particleEffect, _lockedBrick);
 
                     map.Add(brick);
                 }

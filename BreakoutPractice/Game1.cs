@@ -143,8 +143,8 @@ namespace BreakoutPractice
 
             _levelMaker = new LevelMaker(_random, _brickTemplate, _particleEffect, _lockedBrickSprite);
 
-            _health = 1;
-            _score = 5000;
+            _health = 3;
+            _score = 0;
 
             _hud = new Hud(_health, _score, _heartSprites, _smallFont);
 
