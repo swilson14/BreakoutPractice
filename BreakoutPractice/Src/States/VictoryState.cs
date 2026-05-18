@@ -25,6 +25,7 @@ namespace BreakoutPractice.Src.States
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
         private HighScoreList _highScores;
+        private int _recoverPoints;
 
         public VictoryState(StateMachine stateMachine, Hud hud, LevelMaker levelMaker, Dictionary<string, SpriteFont> fonts) : base(stateMachine)
         {
@@ -42,7 +43,8 @@ namespace BreakoutPractice.Src.States
             _score = (int)args[3];
             _balls = (List<Ball>)args[4];
             _highScores = (HighScoreList)args[5];
-            
+            _recoverPoints = (int)args[6];
+
             // Remove all balls other than the first
             _balls.RemoveRange(1,_balls.Count-1);
             _ball = _balls[0];
@@ -57,7 +59,7 @@ namespace BreakoutPractice.Src.States
 
             if (keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                _stateMachine.ChangeState("serve", _paddle, _levelMaker.CreateMap(_level + 1), _health, _score, _level + 1, _highScores);
+                _stateMachine.ChangeState("serve", _paddle, _levelMaker.CreateMap(_level + 1), _health, _score, _level + 1, _highScores, _recoverPoints);
             }
         }
 

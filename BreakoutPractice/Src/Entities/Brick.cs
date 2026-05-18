@@ -35,12 +35,14 @@ namespace BreakoutPractice.Src.Entities
         public SoundEffect BrickHit1 { get; }
         public SoundEffect BrickHit2 { get; }
 
+        public bool IsLockedBrick { get; set; }
+
         public Dictionary<string, SoundEffect> SoundEffects { get;  }
 
         private ParticleEffect _particleEffect;
         private Dictionary<string, Vector3> _hslColors;
 
-        private bool _isLockedBrick;
+        
         private Sprite _lockedBrickSprite;
 
 
@@ -67,13 +69,23 @@ namespace BreakoutPractice.Src.Entities
                 {"purple", new Vector3(319f, 0.5f, 0.7f)},
                 {"gold", new Vector3(57f, 1.0f, 0.6f)}
             };
-            _isLockedBrick = false;
+            IsLockedBrick = false;
             _lockedBrickSprite = lockedBrickSprite;
         }
 
-        public void BrickHit()
+        public void BrickHit(bool hasKeyPowerUp)
         {          
             BrickHit2.Play();
+
+            if (IsLockedBrick)
+            {
+                if (hasKeyPowerUp)
+                {
+                    Active = false;
+                }
+
+                return;
+            }
 
             Vector3 currentHslColor = new Vector3();
 
@@ -136,10 +148,10 @@ namespace BreakoutPractice.Src.Entities
             int spriteIndex = ((Color - 1) * 4) + Tier;
             brickSprite = BrickSprites[spriteIndex];
 
-            if (Active && _isLockedBrick)
+            if (Active && IsLockedBrick)
             {
                 brickSprite = _lockedBrickSprite;
-                brickSprite.Draw(spriteBatch, new Vector2(X,Y));
+                brickSprite.Draw(spriteBatch, new Vector2(X, Y));
             }
             else if (Active)
             {

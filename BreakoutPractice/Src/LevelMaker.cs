@@ -58,7 +58,7 @@ namespace BreakoutPractice.Src
             // Highest tier and color based on level.
             int highestTier = Math.Min(3, (int)Math.Floor(level / 5.0));
             int highestColor = Math.Min(5, level % 5 + 3);
-
+            int maxLockedBricks = 2;
             for (int row = 1; row <= _numRows; row++)
             {
                 bool skipPattern = false;
@@ -89,6 +89,12 @@ namespace BreakoutPractice.Src
                 if (_random.Next(2) == 1)
                 {
                     altFlag = true;
+                }
+
+                bool lockedFlag = false;
+                if (_random.Next(4) == 1)
+                {
+                    lockedFlag = true;
                 }
 
                 int solidColor = _random.Next(1, highestColor);
@@ -132,6 +138,11 @@ namespace BreakoutPractice.Src
                     }
 
                     Brick brick = new Brick(_template.SoundEffects, x, y, _template.BrickSprites, tier, color, _particleEffect, _lockedBrick);
+
+                    if (lockedFlag && map.Count(b => b.IsLockedBrick) <= maxLockedBricks)
+                    {
+                        brick.IsLockedBrick = true;
+                    }
 
                     map.Add(brick);
                 }

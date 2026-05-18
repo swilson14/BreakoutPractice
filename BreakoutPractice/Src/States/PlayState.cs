@@ -34,9 +34,12 @@ namespace BreakoutPractice.Src.States
         private HighScoreList _highScores;
         private Sprite _extraBallSprite;
         private ExtraBallPowerup _extraBallPowerup;
+        private KeyPowerup _keyPowerup;
         private List<Sprite> _ballSprites;
         private int _scoreCheck;
         private int _recoverPoints;
+        private bool _hasKeyPowerUp;
+
 
         public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites) : base(stateMachine)
         {
@@ -52,7 +55,7 @@ namespace BreakoutPractice.Src.States
             _extraBallSprite = extraBallSprite;
             _ballSprites = ballSprites;
             _scoreCheck = 1;
-
+            _hasKeyPowerUp = false;
         }
 
         public override void Enter(params object[] args)
@@ -167,7 +170,14 @@ namespace BreakoutPractice.Src.States
                 {
                     if (brick.Active && ball.Collides(new Rectangle((int)brick.X, (int)brick.Y, brick.Width, brick.Height)))
                     {
-                        _score += (brick.Tier * 200 + brick.Color * 25);
+                        if (brick.IsLockedBrick)
+                        {
+                            _score += 300 * _level;
+                        }
+                        else
+                        {
+                            _score += (brick.Tier * 200 + brick.Color * 25);
+                        }
 
                         if (_score > 5000 * _scoreCheck)
                         {
@@ -180,7 +190,7 @@ namespace BreakoutPractice.Src.States
                             _scoreCheck++;                 
                         }
 
-                        brick.BrickHit();
+                        brick.BrickHit(_hasKeyPowerUp);
 
                         if (_score > _recoverPoints)
                         {
@@ -192,7 +202,7 @@ namespace BreakoutPractice.Src.States
                         if (CheckVictory())
                         {
                             _victorySound.Play();
-                            _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _balls, _highScores);
+                            _stateMachine.ChangeState("victory", _level, _paddle, _health, _score, _balls, _highScores, _recoverPoints);
                         }
 
                         int ballRadius = (int)(ball.Width / 2f);

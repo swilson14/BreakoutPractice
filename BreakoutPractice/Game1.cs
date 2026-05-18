@@ -364,8 +364,8 @@ namespace BreakoutPractice
             }
 
             // Locked brick
-            x = 64;
-            y = 160;
+            x = 160;
+            y = 48;
 
             _atlas.AddRegion($"brick-locked", x, y, 32, 16);
             _lockedBrickSprite = _atlas.CreateSprite("brick-locked");
