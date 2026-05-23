@@ -39,9 +39,9 @@ namespace BreakoutPractice.Src.States
         private int _scoreCheck;
         private int _recoverPoints;
         private bool _hasKeyPowerUp;
+        private Sprite _keySprite;
 
-
-        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites) : base(stateMachine)
+        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites, Sprite keySprite) : base(stateMachine)
         {
             _pauseSound = gameSounds["pause"];
             _largeFont = largeFont;
@@ -56,6 +56,7 @@ namespace BreakoutPractice.Src.States
             _ballSprites = ballSprites;
             _scoreCheck = 1;
             _hasKeyPowerUp = false;
+            _keySprite = keySprite;
         }
 
         public override void Enter(params object[] args)
@@ -74,8 +75,9 @@ namespace BreakoutPractice.Src.States
 
             _balls[0].Velocity = new Vector2(ballDx, ballDy);
 
-            // Make sure power up is null
+            // Make sure power ups are null
             _extraBallPowerup = null;
+            _keyPowerup = null;
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -134,6 +136,20 @@ namespace BreakoutPractice.Src.States
                 }
             }
 
+            if (_keyPowerup != null)
+            {
+                _keyPowerup.Update(gameTime);
+                if (_keyPowerup.Position.Y > Constants.VIRTUAL_HEIGHT + _keyPowerup.Sprite.Height)
+                {
+                    _keyPowerup = null;
+                }
+                if (_keyPowerup.Collides(new Rectangle((int)_paddle.X, (int)_paddle.Y, _paddle.Width, _paddle.Height)))
+                {
+                    _hasKeyPowerUp = true;
+                    _keyPowerup = null;
+                }
+            }
+
             for (int i = 0; i < _balls.Count; i++)
             {
                 Ball ball = _balls[i];
@@ -172,7 +188,10 @@ namespace BreakoutPractice.Src.States
                     {
                         if (brick.IsLockedBrick)
                         {
-                            _score += 300 * _level;
+                            if (_hasKeyPowerUp)
+                            {
+                                _score += 300 * _level;
+                            }
                         }
                         else
                         {
@@ -187,10 +206,15 @@ namespace BreakoutPractice.Src.States
                                 int newPaddleSize = (int)_paddle.Size + 1;
                                 _paddle.ChangeSize(newPaddleSize);
                             }
-                            _scoreCheck++;                 
+                            _scoreCheck++;
                         }
 
                         brick.BrickHit(_hasKeyPowerUp);
+
+                        if (_hasKeyPowerUp)
+                        {
+                            _hasKeyPowerUp = false;
+                        }
 
                         if (_score > _recoverPoints)
                         {
@@ -242,13 +266,23 @@ namespace BreakoutPractice.Src.States
 
                         ball.Velocity = new Vector2(ball.Velocity.X, (float)(ball.Velocity.Y * 1.02));
 
+                        // Spawn powerups
                         if (_extraBallPowerup == null && _balls.Count < 2)
                         {
                             if (_random.Next(4) > 2)
                             {
-                                _extraBallPowerup = new ExtraBallPowerup(_extraBallSprite, new Vector2(brick.X, brick.Y+_extraBallSprite.Height));
+                                _extraBallPowerup = new ExtraBallPowerup(_extraBallSprite, new Vector2(brick.X, brick.Y + _extraBallSprite.Height));
                             }
                         }
+
+                        if (!_hasKeyPowerUp && _bricks.Count(b => b.IsLockedBrick) > 0)
+                        {
+                            if (_random.Next(4) > 2)
+                            {
+                                _keyPowerup = new KeyPowerup(_keySprite, new Vector2(brick.X, brick.Y + _extraBallSprite.Height));
+                            }
+                        }
+
                         break;
                     }
                 }
@@ -316,6 +350,11 @@ namespace BreakoutPractice.Src.States
             if (_extraBallPowerup != null)
             {
                 _extraBallPowerup.Draw(spriteBatch);
+            }
+
+            if (_keyPowerup != null)
+            {
+                _keyPowerup.Draw(spriteBatch);
             }
         }
 
