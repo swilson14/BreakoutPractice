@@ -209,12 +209,7 @@ namespace BreakoutPractice.Src.States
                             _scoreCheck++;
                         }
 
-                        brick.BrickHit(_hasKeyPowerUp);
-
-                        if (_hasKeyPowerUp)
-                        {
-                            _hasKeyPowerUp = false;
-                        }
+                        _hasKeyPowerUp = brick.BrickHit(_hasKeyPowerUp);
 
                         if (_score > _recoverPoints)
                         {
@@ -275,7 +270,7 @@ namespace BreakoutPractice.Src.States
                             }
                         }
 
-                        if (!_hasKeyPowerUp && _bricks.Count(b => b.IsLockedBrick) > 0)
+                        if (!_hasKeyPowerUp && _keyPowerup == null && _bricks.Count(b => b.IsLockedBrick && b.Active) > 0)
                         {
                             if (_random.Next(4) > 2)
                             {

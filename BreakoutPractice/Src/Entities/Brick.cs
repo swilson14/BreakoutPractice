@@ -73,8 +73,8 @@ namespace BreakoutPractice.Src.Entities
             _lockedBrickSprite = lockedBrickSprite;
         }
 
-        public void BrickHit(bool hasKeyPowerUp)
-        {          
+        public bool BrickHit(bool hasKeyPowerUp)
+        {           
             BrickHit2.Play();
 
             if (IsLockedBrick)
@@ -83,8 +83,8 @@ namespace BreakoutPractice.Src.Entities
                 {
                     Active = false;
                 }
-
-                return;
+                // used to set haskeypowerup to false.
+                return false;
             }
 
             Vector3 currentHslColor = new Vector3();
@@ -141,6 +141,8 @@ namespace BreakoutPractice.Src.Entities
             {
                 BrickHit1.Play();
             }
+
+            return hasKeyPowerUp;
         }
 
         public void Draw(SpriteBatch spriteBatch)
