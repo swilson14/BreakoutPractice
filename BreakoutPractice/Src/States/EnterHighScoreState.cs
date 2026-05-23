@@ -109,10 +109,14 @@ namespace BreakoutPractice.Src.States
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
             string yourScoreText = $"Your score: {_score}";
             float yourScoreWidth = _mediumFont.MeasureString(yourScoreText).X;
-            spriteBatch.DrawString(_mediumFont, yourScoreText, new Vector2((Constants.VIRTUAL_WIDTH - yourScoreWidth) / 2, 30), Color.White);
-            
+            spriteBatch.DrawString(_mediumFont, yourScoreText, new Vector2((viewportWidth - yourScoreWidth) / 2, 30), Color.White);
+
             Color char1Color = Color.White;
             Color char2Color = Color.White;
             Color char3Color = Color.White;
@@ -130,18 +134,18 @@ namespace BreakoutPractice.Src.States
                 char3Color = new Color(103, 255, 255, 255);
             }
 
-            spriteBatch.DrawString(_largeFont, _chars[0].ToString(), 
-                new Vector2(Constants.VIRTUAL_WIDTH / 2 - 28, Constants.VIRTUAL_HEIGHT / 2),
+            spriteBatch.DrawString(_largeFont, _chars[0].ToString(),
+                new Vector2(viewportWidth / 2 - 100, viewportHeight / 2),
                 char1Color
                 );
 
             spriteBatch.DrawString(_largeFont, _chars[1].ToString(),
-                new Vector2(Constants.VIRTUAL_WIDTH / 2 - 6, Constants.VIRTUAL_HEIGHT / 2),
+                new Vector2(viewportWidth / 2 - 40, viewportHeight / 2),
                 char2Color
                 );
 
             spriteBatch.DrawString(_largeFont, _chars[2].ToString(),
-                new Vector2(Constants.VIRTUAL_WIDTH / 2 + 20, Constants.VIRTUAL_HEIGHT / 2),
+                new Vector2(viewportWidth / 2 + 20, viewportHeight / 2),
                 char3Color
                 );
 
@@ -149,9 +153,8 @@ namespace BreakoutPractice.Src.States
             float pressEnterWidth = _smallFont.MeasureString(pressEnterText).X;
 
             spriteBatch.DrawString(_smallFont, pressEnterText,
-                new Vector2(Constants.VIRTUAL_WIDTH - pressEnterWidth / 2, Constants.VIRTUAL_HEIGHT - 18),
+                new Vector2((viewportWidth - pressEnterWidth) / 2, viewportHeight - 54),
                 Color.White);
-
         }
     }
 }

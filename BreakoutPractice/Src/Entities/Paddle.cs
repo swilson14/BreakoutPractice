@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BreakoutPractice.Src
+namespace BreakoutPractice.Src.Entities
 {
     public enum PaddleSize
     {
@@ -89,6 +89,16 @@ namespace BreakoutPractice.Src
             int spriteIndex = (int)Size + 4 * (Skin - 1);
             spriteIndex = spriteIndex - 1;
             PaddleSprite = _paddleSprites[spriteIndex];
+        }
+
+        public void ChangeSize(int size)
+        {
+            Size = (PaddleSize)size;
+            int spriteIndex = (int)Size + 4 * (Skin - 1);
+            spriteIndex = spriteIndex - 1;
+            PaddleSprite = _paddleSprites[spriteIndex];
+            Width = (int)PaddleSprite.Width;
+            Height = (int)PaddleSprite.Height;
         }
 
         public void Draw(SpriteBatch spriteBatch)

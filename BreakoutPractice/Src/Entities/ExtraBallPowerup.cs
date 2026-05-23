@@ -1,0 +1,18 @@
+﻿using BreakoutPractice.Src.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BreakoutPractice.Src.Entities
+{
+    public class ExtraBallPowerup : PowerUp
+    {
+        public ExtraBallPowerup(Sprite sprite, Vector2 position) : base(sprite, position)
+        {
+        }
+    }
+}

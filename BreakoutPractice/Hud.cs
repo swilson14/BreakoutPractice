@@ -34,8 +34,13 @@ namespace BreakoutPractice
         public void Draw(SpriteBatch spriteBatch)
         {
             DrawHealth(spriteBatch);
-            DrawScore(spriteBatch);
         }
+
+        public void DrawText(SpriteBatch spriteBatch, int viewportWidth)
+        {
+            DrawScore(spriteBatch, viewportWidth);
+        }
+
 
         private void DrawHealth(SpriteBatch spriteBatch)
         {
@@ -55,11 +60,11 @@ namespace BreakoutPractice
 
         }
 
-        private void DrawScore(SpriteBatch spriteBatch)
+        private void DrawScore(SpriteBatch spriteBatch, int viewportWidth)
         {
             string scoreText = $"Score: {_score}";
             float scoreWidth = _smallFont.MeasureString(scoreText).X;
-            spriteBatch.DrawString(_smallFont, scoreText, new Vector2(Constants.VIRTUAL_WIDTH-scoreWidth,5), Color.White);
+            spriteBatch.DrawString(_smallFont, scoreText, new Vector2(viewportWidth - scoreWidth, 15), Color.White);
         }
 
     }

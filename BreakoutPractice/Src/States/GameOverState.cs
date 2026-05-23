@@ -68,6 +68,11 @@ namespace BreakoutPractice.Src.States
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
             string gameOverText = "GAME OVER";
             float gameOverWidth = _largeFont.MeasureString(gameOverText).X;
 
@@ -78,21 +83,21 @@ namespace BreakoutPractice.Src.States
             float pressEnterWidth = _mediumFont.MeasureString(pressEnterText).X;
 
             spriteBatch.DrawString(
-                _largeFont, 
-                gameOverText, 
-                new Vector2((Constants.VIRTUAL_WIDTH - gameOverWidth) / 2, Constants.VIRTUAL_HEIGHT / 3),
+                _largeFont,
+                gameOverText,
+                new Vector2((viewportWidth - gameOverWidth) / 2, viewportHeight / 3),
                 Color.White);
 
             spriteBatch.DrawString(
                 _mediumFont,
                 finalScoreText,
-                new Vector2((Constants.VIRTUAL_WIDTH - finalScoreWidth) / 2, Constants.VIRTUAL_HEIGHT / 2),
+                new Vector2((viewportWidth - finalScoreWidth) / 2, viewportHeight / 2),
                 Color.White);
 
             spriteBatch.DrawString(
                 _mediumFont,
                 pressEnterText,
-                new Vector2((Constants.VIRTUAL_WIDTH - pressEnterWidth) / 2, Constants.VIRTUAL_HEIGHT - Constants.VIRTUAL_HEIGHT / 4),
+                new Vector2((viewportWidth - pressEnterWidth) / 2, viewportHeight - viewportHeight / 4),
                 Color.White);
         }
     }

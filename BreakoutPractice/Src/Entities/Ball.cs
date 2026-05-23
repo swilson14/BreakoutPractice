@@ -9,7 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BreakoutPractice.Src
+namespace BreakoutPractice.Src.Entities
 {
     public class Ball
     {
@@ -21,20 +21,27 @@ namespace BreakoutPractice.Src
         public float Y { get; set; }
         public Vector2 Velocity { get; set; }
 
+        public bool Active { get; set; }
+
         public int Skin { get; set; }
 
         private SoundEffect _wallHit;
 
-        private Sprite ballSprite;
+        private Sprite _ballSprite;
 
-        public Ball(int skin, SoundEffect wallHit, List<Sprite> ballSprites)
+        private Random _random;
+
+      
+        public Ball(int skin, SoundEffect wallHit, List<Sprite> ballSprites, Random random)
         {
             Width = 8;
             Height = 8;
             Velocity = Vector2.Zero;
             Skin = skin;
             _wallHit = wallHit;
-            ballSprite = ballSprites[Skin];
+            _ballSprite = ballSprites[Skin];
+            Active = true;
+            _random = random;
         }
 
         public bool Collides(Rectangle target)
@@ -58,6 +65,17 @@ namespace BreakoutPractice.Src
             Y = Constants.VIRTUAL_HEIGHT / 2 - 2;
             Velocity = Vector2.Zero;
         }
+
+        public void extraBall(Paddle paddle)
+        {
+            X = paddle.X;
+            Y = paddle.Y;
+
+            int ballDx = _random.Next(-200, 201);
+            int ballDy = _random.Next(-60, -51);
+            Velocity = new Vector2(ballDx, ballDy);
+        }
+
 
         public void Update(GameTime gameTime)
         {
@@ -88,7 +106,7 @@ namespace BreakoutPractice.Src
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            ballSprite.Draw(spriteBatch, new Vector2(X, Y));
+            _ballSprite.Draw(spriteBatch, new Vector2(X, Y));
         }
     }
 }

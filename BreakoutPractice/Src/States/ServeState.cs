@@ -1,4 +1,5 @@
 ﻿using BreakoutPractice.Input;
+using BreakoutPractice.Src.Entities;
 using BreakoutPractice.Src.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -18,7 +19,7 @@ namespace BreakoutPractice.Src.States
         private List<Brick> _bricks;
         private int _health;
         private int _score;
-        private Ball _ball;
+        private List<Ball> _balls;
         private Random _random;
         private List<Sprite> _ballSprites;
         private SoundEffect _wallHit;
@@ -27,6 +28,7 @@ namespace BreakoutPractice.Src.States
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
         private HighScoreList _highScores;
+        private int _recoverPoints;
 
         public ServeState(StateMachine stateMachine, List<Sprite> ballSprites, SoundEffect wallHit, Random random, Hud hud, Dictionary<string,SpriteFont> fonts) : base(stateMachine)
         {
@@ -36,6 +38,7 @@ namespace BreakoutPractice.Src.States
             _hud = hud;
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
+            _balls = new List<Ball>();
         }
 
         public override void Enter(params object[] args)
@@ -46,9 +49,13 @@ namespace BreakoutPractice.Src.States
             _score = (int)args[3];
             _level = (int)args[4];
             _highScores = (HighScoreList)args[5];
+            _recoverPoints = (int)args[6];
+
+            // Should be zero balls at this point
+            _balls.Clear();
 
             int skin = _random.Next(7);
-            _ball = new Ball(skin, _wallHit, _ballSprites);
+            _balls.Add(new Ball(skin, _wallHit, _ballSprites, _random));
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -56,19 +63,19 @@ namespace BreakoutPractice.Src.States
             _paddle.Update(gameTime, keyboard);
             _hud.Update(_health, _score);
             // ball follows the player
-            _ball.X = _paddle.X + (_paddle.Width / 2);
-            _ball.Y = _paddle.Y - 8;
+            _balls[0].X = _paddle.X + (_paddle.Width / 2);
+            _balls[0].Y = _paddle.Y - 8;
 
             if (keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _ball, _level, _highScores);
+                _stateMachine.ChangeState("play", _paddle, _bricks, _health, _score, _balls, _level, _highScores, _recoverPoints);
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             _paddle.Draw(spriteBatch);
-            _ball.Draw(spriteBatch);
+            _balls[0].Draw(spriteBatch);
 
             foreach (Brick brick in _bricks)
             {
@@ -76,21 +83,25 @@ namespace BreakoutPractice.Src.States
             }
 
             _hud.Draw(spriteBatch);
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
+            _hud.DrawText(spriteBatch, viewportWidth);
 
             string completeText = $"Level {_level}";
             float completeTextWidth = _largeFont.MeasureString(completeText).X;
 
             spriteBatch.DrawString(_largeFont, completeText,
-                new Vector2((Constants.VIRTUAL_WIDTH - completeTextWidth) / 2, Constants.VIRTUAL_HEIGHT / 4),
+                new Vector2((viewportWidth - completeTextWidth) / 2, viewportHeight / 4),
                 Color.White);
 
             string instructionsText = "Press Enter to serve!";
             float instructionsWidth = _mediumFont.MeasureString(instructionsText).X;
 
             spriteBatch.DrawString(_mediumFont, instructionsText,
-                new Vector2((Constants.VIRTUAL_WIDTH - instructionsWidth) / 2, Constants.VIRTUAL_HEIGHT / 2),
+                new Vector2((viewportWidth - instructionsWidth) / 2, viewportHeight / 2),
                 Color.White);
-
         }
     }
 }

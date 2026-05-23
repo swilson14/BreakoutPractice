@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BreakoutPractice.Src
+namespace BreakoutPractice.Src.Entities
 {
    
 
@@ -35,13 +35,18 @@ namespace BreakoutPractice.Src
         public SoundEffect BrickHit1 { get; }
         public SoundEffect BrickHit2 { get; }
 
+        public bool IsLockedBrick { get; set; }
+
         public Dictionary<string, SoundEffect> SoundEffects { get;  }
 
         private ParticleEffect _particleEffect;
         private Dictionary<string, Vector3> _hslColors;
 
+        
+        private Sprite _lockedBrickSprite;
 
-        public Brick(Dictionary<string, SoundEffect> soundEffects, float x, float y, List<Sprite> brickSprites, int tier, int color, ParticleEffect particleEffect)
+
+        public Brick(Dictionary<string, SoundEffect> soundEffects, float x, float y, List<Sprite> brickSprites, int tier, int color, ParticleEffect particleEffect, Sprite lockedBrickSprite)
         {
             SoundEffects = soundEffects;
             BrickSprites = brickSprites;
@@ -64,11 +69,23 @@ namespace BreakoutPractice.Src
                 {"purple", new Vector3(319f, 0.5f, 0.7f)},
                 {"gold", new Vector3(57f, 1.0f, 0.6f)}
             };
+            IsLockedBrick = false;
+            _lockedBrickSprite = lockedBrickSprite;
         }
 
-        public void BrickHit()
-        {          
+        public bool BrickHit(bool hasKeyPowerUp)
+        {           
             BrickHit2.Play();
+
+            if (IsLockedBrick)
+            {
+                if (hasKeyPowerUp)
+                {
+                    Active = false;
+                }
+                // used to set haskeypowerup to false.
+                return false;
+            }
 
             Vector3 currentHslColor = new Vector3();
 
@@ -124,15 +141,23 @@ namespace BreakoutPractice.Src
             {
                 BrickHit1.Play();
             }
+
+            return hasKeyPowerUp;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             int spriteIndex = ((Color - 1) * 4) + Tier;
             brickSprite = BrickSprites[spriteIndex];
-            if (Active)
+
+            if (Active && IsLockedBrick)
             {
-                brickSprite.Draw(spriteBatch, new Vector2(X,Y));
+                brickSprite = _lockedBrickSprite;
+                brickSprite.Draw(spriteBatch, new Vector2(X, Y));
+            }
+            else if (Active)
+            {
+                brickSprite.Draw(spriteBatch, new Vector2(X, Y));
             }
         }
     }

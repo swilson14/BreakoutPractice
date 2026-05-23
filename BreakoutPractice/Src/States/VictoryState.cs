@@ -1,4 +1,5 @@
 ﻿using BreakoutPractice.Input;
+using BreakoutPractice.Src.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,12 +18,14 @@ namespace BreakoutPractice.Src.States
         private int _score;
         private Paddle _paddle;
         private int _health;
+        private List<Ball> _balls;
         private Ball _ball;
         private Hud _hud;
         private LevelMaker _levelMaker;
         private SpriteFont _largeFont;
         private SpriteFont _mediumFont;
         private HighScoreList _highScores;
+        private int _recoverPoints;
 
         public VictoryState(StateMachine stateMachine, Hud hud, LevelMaker levelMaker, Dictionary<string, SpriteFont> fonts) : base(stateMachine)
         {
@@ -38,8 +41,13 @@ namespace BreakoutPractice.Src.States
             _paddle = (Paddle)args[1];
             _health = (int)args[2];
             _score = (int)args[3];
-            _ball = (Ball)args[4];
+            _balls = (List<Ball>)args[4];
             _highScores = (HighScoreList)args[5];
+            _recoverPoints = (int)args[6];
+
+            // Remove all balls other than the first
+            _balls.RemoveRange(1,_balls.Count-1);
+            _ball = _balls[0];
         }
 
         public override void Update(GameTime gameTime, KeyboardInfo keyboard)
@@ -51,7 +59,7 @@ namespace BreakoutPractice.Src.States
 
             if (keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                _stateMachine.ChangeState("serve", _paddle, _levelMaker.CreateMap(_level + 1), _health, _score, _level + 1, _highScores);
+                _stateMachine.ChangeState("serve", _paddle, _levelMaker.CreateMap(_level + 1), _health, _score, _level + 1, _highScores, _recoverPoints);
             }
         }
 
@@ -60,19 +68,24 @@ namespace BreakoutPractice.Src.States
             _paddle.Draw(spriteBatch);
             _ball.Draw(spriteBatch);
             _hud.Draw(spriteBatch);
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
+            _hud.DrawText(spriteBatch, viewportWidth);
 
             string completeText = $"Level {_level} complete!";
             float completeTextWidth = _largeFont.MeasureString(completeText).X;
 
-            spriteBatch.DrawString(_largeFont, completeText, 
-                new Vector2((Constants.VIRTUAL_WIDTH - completeTextWidth) / 2, Constants.VIRTUAL_HEIGHT / 4),
+            spriteBatch.DrawString(_largeFont, completeText,
+                new Vector2((viewportWidth - completeTextWidth) / 2, viewportHeight / 4),
                 Color.White);
 
             string instructionsText = "Press Enter to continue!";
             float instructionsWidth = _mediumFont.MeasureString(instructionsText).X;
 
             spriteBatch.DrawString(_mediumFont, instructionsText,
-                new Vector2((Constants.VIRTUAL_WIDTH - instructionsWidth) / 2, Constants.VIRTUAL_HEIGHT / 2),
+                new Vector2((viewportWidth - instructionsWidth) / 2, viewportHeight / 2),
                 Color.White);
         }
     }

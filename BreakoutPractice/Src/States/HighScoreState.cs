@@ -46,9 +46,14 @@ namespace BreakoutPractice.Src.States
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+
+        }
+
+        public override void DrawText(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        {
             string HighScoresTitle = "High Scores";
             float HighScoreTitleWidth = _largeFont.MeasureString(HighScoresTitle).X;
-            spriteBatch.DrawString(_largeFont, HighScoresTitle, new Vector2((Constants.VIRTUAL_WIDTH - HighScoreTitleWidth) / 2, 20), Color.White);
+            spriteBatch.DrawString(_largeFont, HighScoresTitle, new Vector2((viewportWidth - HighScoreTitleWidth) / 2, 20), Color.White);
 
             // Iterate over all high scores.
             for (int i = 0; i < 10; i++)
@@ -62,21 +67,21 @@ namespace BreakoutPractice.Src.States
                 spriteBatch.DrawString(
                     _mediumFont,
                     scoreNumberText,
-                    new Vector2(Constants.VIRTUAL_WIDTH / 4, 60 + scoreNumber + scoreNumber * 13),
+                    new Vector2(viewportWidth / 4, 100 + scoreNumber + scoreNumber * 39),
                     Color.White
                     );
 
                 spriteBatch.DrawString(
                     _mediumFont,
                     name,
-                    new Vector2(Constants.VIRTUAL_WIDTH / 4 + 38, 60 + scoreNumber + scoreNumber * 13), // right aligned??
+                    new Vector2(viewportWidth / 4 + 75, 100 + scoreNumber + scoreNumber * 39),
                     Color.White
                     );
 
                 spriteBatch.DrawString(
                     _mediumFont,
                     score,
-                    new Vector2(Constants.VIRTUAL_WIDTH / 2, 60 + scoreNumber + scoreNumber * 13), // right aligned??
+                    new Vector2(viewportWidth / 2, 100 + scoreNumber + scoreNumber * 39),
                     Color.White
                     );
 
@@ -87,7 +92,7 @@ namespace BreakoutPractice.Src.States
             spriteBatch.DrawString(
                 _smallFont,
                 pressEscapeText,
-                new Vector2((Constants.VIRTUAL_WIDTH - pressEscapeWidth) / 2, Constants.VIRTUAL_HEIGHT - 18),
+                new Vector2((viewportWidth - pressEscapeWidth) / 2, viewportHeight - 50),
                 Color.White
                 );
         }
