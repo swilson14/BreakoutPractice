@@ -27,7 +27,10 @@ namespace BreakoutPractice.Src.States
         private LevelMaker _levelMaker;
         private HighScoreList _highScores;
 
-        public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, Dictionary<string,SpriteFont> fonts, LevelMaker levelMaker, Paddle paddle, int health, int score) : base(stateMachine)
+        private Game _game;
+
+        public StartState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, Dictionary<string,SpriteFont> fonts,
+            LevelMaker levelMaker, Paddle paddle, int health, int score, Game game) : base(stateMachine)
         {
             highlighted = 1;
             _paddleHitSound = gameSounds["paddle_hit"];
@@ -40,6 +43,7 @@ namespace BreakoutPractice.Src.States
             _level = 1;
             _levelMaker = levelMaker;
             _bricks = _levelMaker.CreateMap(_level);
+            _game = game;
         }
 
         public override void Enter(params object[] args)
@@ -79,7 +83,7 @@ namespace BreakoutPractice.Src.States
 
             // Escape/Quit Logic is no longer global
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
-                Exit();
+                _game.Exit();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

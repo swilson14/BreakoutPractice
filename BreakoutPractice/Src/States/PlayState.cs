@@ -41,7 +41,10 @@ namespace BreakoutPractice.Src.States
         private bool _hasKeyPowerUp;
         private Sprite _keySprite;
 
-        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud, Sprite extraBallSprite, List<Sprite> ballSprites, Sprite keySprite) : base(stateMachine)
+        private Game _game;
+
+        public PlayState(StateMachine stateMachine, Dictionary<string,SoundEffect> gameSounds, SpriteFont largeFont, Random random, Hud hud,
+            Sprite extraBallSprite, List<Sprite> ballSprites, Sprite keySprite, Game game) : base(stateMachine)
         {
             _pauseSound = gameSounds["pause"];
             _largeFont = largeFont;
@@ -57,6 +60,7 @@ namespace BreakoutPractice.Src.States
             _scoreCheck = 1;
             _hasKeyPowerUp = false;
             _keySprite = keySprite;
+            _game = game;
         }
 
         public override void Enter(params object[] args)
@@ -313,7 +317,7 @@ namespace BreakoutPractice.Src.States
 
             // Escape/Quit Logic is no longer global
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
-                Exit();
+                _game.Exit();
         }
 
         private bool CheckVictory()

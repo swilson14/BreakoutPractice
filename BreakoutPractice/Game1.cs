@@ -155,10 +155,10 @@ namespace BreakoutPractice
 
             _stateMachine.States = new Dictionary<string, State>
             {
-                { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score)},
-                { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud, _extraBallSprite, _ballSprites,_keyPowerupSprite)},
+                { "start", new StartState(_stateMachine, soundEffects, fonts, _levelMaker, _paddle, _health, _score, this)},
+                { "play", new PlayState(_stateMachine, soundEffects, _largeFont, _random, _hud, _extraBallSprite, _ballSprites,_keyPowerupSprite, this)},
                 { "serve", new ServeState(_stateMachine, _ballSprites, _wallHitSound, _random, _hud, fonts)},
-                { "game_over", new GameOverState(_stateMachine, fonts, soundEffects)},
+                { "game_over", new GameOverState(_stateMachine, fonts, soundEffects, this)},
                 { "victory", new VictoryState(_stateMachine, _hud, _levelMaker, fonts) },
                 { "high_scores", new HighScoreState(_stateMachine, fonts, soundEffects) },
                 { "enter_high_score", new EnterHighScoreState(_stateMachine, fonts, soundEffects)},

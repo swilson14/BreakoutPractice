@@ -19,11 +19,14 @@ namespace BreakoutPractice.Src.States
         private HighScoreList _highScores;
         private SoundEffect _highScoreSound;
 
-        public GameOverState(StateMachine stateMachine, Dictionary<string, SpriteFont> fonts, Dictionary<string, SoundEffect> soundEffects) : base(stateMachine)
+        private Game _game;
+
+        public GameOverState(StateMachine stateMachine, Dictionary<string, SpriteFont> fonts, Dictionary<string, SoundEffect> soundEffects, Game game) : base(stateMachine)
         {
             _largeFont = fonts["large"];
             _mediumFont = fonts["medium"];
             _highScoreSound = soundEffects["high_score"];
+            _game = game;
         }
 
         public override void Enter(params object[] args)
@@ -63,7 +66,7 @@ namespace BreakoutPractice.Src.States
 
             // Escape/Quit Logic is no longer global
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
-                Exit();
+                _game.Exit();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
